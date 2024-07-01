@@ -2,9 +2,9 @@
   "name": "chord_formatter_v2",
   "version": "1.0.0",
   "description": "Application to format and key change chord sheets",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andy West",

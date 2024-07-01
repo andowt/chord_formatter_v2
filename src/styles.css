@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  #toolbar {
+    display: flex;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ccc;
+  }
+  #toolbar select, #toolbar button {
+    margin-right: 10px;
+  }
+  #editor {
+    width: 100%;
+    height: calc(100vh - 50px);
+    padding: 10px;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    font-size: 16px;
+  }
+  
