@@ -1,23 +1,30 @@
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
   }
+  
   #toolbar {
     display: flex;
     padding: 10px;
-    background-color: #f1f1f1;
+    background: #f0f0f0;
     border-bottom: 1px solid #ccc;
   }
-  #toolbar select, #toolbar button {
+  
+  #toolbar button {
     margin-right: 10px;
   }
+  
   #editor {
-    width: 100%;
-    height: calc(100vh - 50px);
-    padding: 10px;
-    box-sizing: border-box;
+    flex: 1;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
     border: none;
     outline: none;
-    font-size: 16px;
+    resize: none;
   }
   

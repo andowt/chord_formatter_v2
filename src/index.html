@@ -1,30 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Simple Text Editor</title>
-  <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta charset="UTF-8">
+  <title>Chord Formatter</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="toolbar">
-    <select id="fontFamily">
-      <option value="Arial">Arial</option>
-      <option value="Courier New">Courier New</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Times New Roman">Times New Roman</option>
-      <option value="Verdana">Verdana</option>
-    </select>
-    <select id="fontSize">
-      <option value="12px">12px</option>
-      <option value="14px">14px</option>
-      <option value="16px">16px</option>
-      <option value="18px">18px</option>
-      <option value="20px">20px</option>
-      <option value="24px">24px</option>
-      <option value="28px">28px</option>
-    </select>
-    <button id="boldBtn"><b>B</b></button>
-    <button id="italicBtn"><i>I</i></button>
-    <button id="underlineBtn"><u>U</u></button>
+    <button id="openBtn">Open</button>
+    <button id="saveBtn">Save</button>
+    <button id="saveDocxBtn">Save as DOCX</button>
+    <button id="autoLabelBtn">Auto Label</button>
+    <button id="removeLabelsBtn">Remove Labels</button>
+    <button id="removeEmptyLinesBtn">Remove Empty Lines</button>
+    <button id="transposeUpBtn">Transpose Up</button>
+    <button id="transposeDownBtn">Transpose Down</button>
+    <button id="loadExampleBtn">Load Example</button>
   </div>
   <textarea id="editor" placeholder="Start typing..."></textarea>
   <script src="renderer.js"></script>

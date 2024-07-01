@@ -1,19 +1,18 @@
-// Import Electron Modules
-const { app, BrowserWindow } = require('electron/main')
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
-// Create the html window
-const createWindow = () => {
-  const win = new BrowserWindow({
+function createWindow() {
+  const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
+      nodeIntegration: true, // Enable Node.js integration
+      contextIsolation: false, // Disable context isolation
+      enableRemoteModule: true, // Enable remote module (required for Electron >= 12)
     },
-  })
+  });
 
-  win.loadFile('index.html')
+  mainWindow.loadFile('index.html');
 }
 
 // Wait for electron app to be ready
