@@ -13,6 +13,8 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
+
+  console.log("Main Process Running");
 }
 
 // Wait for electron app to be ready

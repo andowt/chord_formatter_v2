@@ -27,4 +27,9 @@ body {
     outline: none;
     resize: none;
   }
-  
+  .highlighted-chord {
+    background-color: yellow; /* Yellow background */
+    padding: 0.2em 0.5em; /* Padding around the chord */
+    border-radius: 3px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+  }

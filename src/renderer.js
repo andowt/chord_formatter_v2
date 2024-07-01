@@ -16,34 +16,31 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error loading example.txt:', err);
         return;
       }
-      editor.value = data;
+      // Replace newline characters with <br> and spaces with &nbsp;
+      const formattedData = data.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+      editor.innerHTML = formattedData;
       console.log('Loaded example.txt into editor.');
     });
   });
 
-  // Event listener for auto label button
-  autoLabelBtn.addEventListener('click', () => {
+// Event listener for auto label button
+autoLabelBtn.addEventListener('click', () => {
     console.log('Auto Label button clicked');
 
-    const lines = editor.value.split('\n');
-    console.log('Editor content lines:', lines);
-
-    const outputLines = lines.map(line => {
-      const isChordLine = isChord(line);
-      console.log(`Processing line: "${line}", isChord: ${isChordLine}`);
-      return isChordLine ? 'CHORD: ' + line : 'TEXT: ' + line;
-    });
-    console.log('Output lines:', outputLines);
-
-    editor.value = outputLines.join('\n');
-    console.log('Updated editor content:', editor.value);
+    const content = editor.textContent; // Get plain text content
+    const formattedContent = formatContent(content); // Format content with chord highlighting
+    editor.innerHTML = formattedContent; // Update editor content with HTML
+    console.log('Updated editor content with chord highlighting.');
   });
 
-  // Helper function to check if a line is a chord or text
-  function isChord(line) {
-    const regex = new RegExp(formattedAllOptions); // Make sure formattedAllOptions is defined
-    const isChord = regex.test(line);
-    console.log(`Checking if "${line}" is a chord: ${isChord}`);
-    return isChord;
+  // Function to format content with chord highlighting
+  function formatContent(content) {
+    // Replace newline characters with <br> and spaces with &nbsp;
+    const formattedContent = content.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+    
+    // Highlight chords using spans
+    const highlightedContent = formattedContent.replace(new RegExp(`(${formattedAllOptions})`, 'g'), '<span class="highlighted-chord">$1</span>');
+
+    return highlightedContent;
   }
 });
