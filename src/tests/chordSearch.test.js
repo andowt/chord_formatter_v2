@@ -1,4 +1,4 @@
-const { isChord } = require('../modules/chordSearch'); // Adjust the path as necessary
+const { findChords } = require('../modules/chordSearch'); // Adjust the path as necessary
 const fs = require('fs');
 const path = require('path');
 
@@ -33,7 +33,7 @@ describe('Chord Finder Single Line Tests', () => {
 
     Object.entries(testCases).forEach(([input, expected], index) => {
         test(`Test ${index}: ${input}`, () => {
-            const result = isChord(input);
+            const result = findChords(input);
             expect(result).toEqual(expected); // Use toEqual for array comparison
 
             if (result && result.length === expected.length && result.every((value, index) => value === expected[index])) {
@@ -82,7 +82,7 @@ describe('Chord Finder File Test', () => {
         // Process each line
         let i = 0;
         for (const line of lines) {
-            const chords = isChord(line);
+            const chords = findChords(line);
             if (chords == null) continue;
             expect(chords).toEqual(expected[i++]);
         }

@@ -7,7 +7,7 @@ const { formatContent } = require('./modules/formatting');
 document.addEventListener('DOMContentLoaded', () => {
   const editor = document.getElementById('editor');
   const loadExampleBtn = document.getElementById('loadExampleBtn');
-  const autoLabelBtn = document.getElementById('autoLabelBtn');
+  const markBtn = document.getElementById('markBtn');
 
   // Load example.txt into editor
   loadExampleBtn.addEventListener('click', () => {
@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Event listener for auto label button
-  autoLabelBtn.addEventListener('click', () => {
+  markBtn.addEventListener('click', () => {
     console.log('Auto Label button clicked');
 
-    const content = editor.textContent; // Get plain text content
+    const content = editor.innerText; // Get plain text content
     const formattedContent = formatContent(content); // Format content with chord highlighting
-    editor.innerHTML = formattedContent; // Update editor content with HTML
+    editor.innerText = formattedContent; // Update editor content with HTML
     console.log('Updated editor content with chord highlighting.');
   });
 });

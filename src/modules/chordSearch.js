@@ -27,9 +27,22 @@ const formattedFullChords = formattedSingleChords + '(\\/(' + base + formattedCh
 const formattedAllOptions = '(' + formattedFullChords + '(?=\\s|$)' + ')';
 console.log("formattedAllOptions: %s", formattedAllOptions);
 
-function isChord(text) {
+function findChords(text) {
   const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
   let match = text.match(regex);
   return match && match.length > 0 ? match : null;
 }
-module.exports = { isChord};
+
+function markChords(text, leftStr, rightStr) {
+  result = text;
+  if(findChords(text) != null)
+  {
+  const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
+  // Replace each match with the surrounded version
+  result = text.replace(regex, match => `${leftStr}${match}${rightStr}`);
+  }
+  return result;
+}
+
+
+module.exports = {findChords, markChords};
