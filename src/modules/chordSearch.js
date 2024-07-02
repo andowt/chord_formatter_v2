@@ -29,12 +29,12 @@ const formattedFullChords = '(' + formattedSingleChords + '(' + '[\\/]' + base +
 console.log("formattedFullChords: %s", formattedFullChords);
 const singleLetterChord1 = '(' + base + '\\s' + ')';
 const singleLetterChord2 = '(' + base + '$' + ')';
-const formattedAllOptions = '\\b(' + [formattedFullChords, singleLetterChord1, singleLetterChord2].join('|') + ')\\b';
+const formattedAllOptions = '(' + [formattedFullChords, singleLetterChord1, singleLetterChord2].join('|') + ')';
 
 function isChord(text) {
-  const regex = new RegExp(formattedAllOptions);
-  const match = text.match(regex);
-  return match ? match[0].trim() : null;
+  const regex = new RegExp(formattedAllOptions, 'g'); // Use the 'g' flag for global matching
+  let match = text.match(regex);
+  return match ? match.filter(item => item !== undefined && item.trim() !== '').map(item => item.trim()) : null;
 }
 
 module.exports = { isChord, chordSharps, chordFlats, chordNaturals, transposeSharp, transposeFlat, formattedAllOptions };
