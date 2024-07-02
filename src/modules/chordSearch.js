@@ -5,7 +5,7 @@ const transposeSharp = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G
 const transposeFlat = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
 
 const base = '[A-G]';
-const accidentals = '(b|#)?';
+const accidentals = '(bb|b|#)?';  // Ensure 'bb' is checked before 'b'
 let types = ['major', 'minor', 'majmin', 'minmaj', 'maj', 'min', 'aug', 'dim', 'sus'];
 
 // Accommodate for first letter capital ie maj -> Maj
@@ -22,19 +22,14 @@ const dominant = '\\d*';
 const extensions = '((b\\d{1,2})|(#\\d{1,2}))*';
 
 const formattedChordOptions = accidentals + types + dominant + extensions;
-console.log("formattedChordOptions: %s", formattedChordOptions);
 const formattedSingleChords = base + formattedChordOptions;
-console.log("formattedSingleChord: %s", formattedSingleChords);
-const formattedFullChords = '(' + formattedSingleChords + '(' + '[\\/]' + base + formattedChordOptions + ')?)';
-console.log("formattedFullChords: %s", formattedFullChords);
-const singleLetterChord1 = '(' + base + '\\s' + ')';
-const singleLetterChord2 = '(' + base + '$' + ')';
-const formattedAllOptions = '(' + [formattedFullChords, singleLetterChord1, singleLetterChord2].join('|') + ')';
+const formattedFullChords = formattedSingleChords + '(\\/(' + base + formattedChordOptions + '))?';
+const formattedAllOptions = '(' + formattedFullChords + '(?=\\s|$)' + ')';
+console.log("formattedAllOptions: %s", formattedAllOptions);
 
 function isChord(text) {
-  const regex = new RegExp(formattedAllOptions, 'g'); // Use the 'g' flag for global matching
+  const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
   let match = text.match(regex);
-  return match ? match.filter(item => item !== undefined && item.trim() !== '').map(item => item.trim()) : null;
+  return match && match.length > 0 ? match : null;
 }
-
 module.exports = { isChord, chordSharps, chordFlats, chordNaturals, transposeSharp, transposeFlat, formattedAllOptions };
