@@ -29,7 +29,7 @@ const formattedFullChords = '(' + formattedSingleChords + '(' + '[\\/]' + base +
 console.log("formattedFullChords: %s", formattedFullChords);
 const singleLetterChord1 = '(' + base + '\\s' + ')';
 const singleLetterChord2 = '(' + base + '$' + ')';
-const formattedAllOptions = '(' + [formattedFullChords, singleLetterChord1, singleLetterChord2].join('|') + ')';
+const formattedAllOptions = '\\b(' + [formattedFullChords, singleLetterChord1, singleLetterChord2].join('|') + ')\\b';
 
 function isChord(text) {
   const regex = new RegExp(formattedAllOptions);

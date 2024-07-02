@@ -15,7 +15,7 @@ const testCases = {
     'Fm7#11':   'Fm7#11',
     'Cmin7b5#11b9#13b12#2': 'Cmin7b5#11b9#13b12#2',
     'Cminmaj7': 'Cminmaj7',
-    'Cheese':   'C', // No chord found, should return null
+    'Cheese':   null, // No chord found, should return null
     'I am the highway':     null, // No chord found, should return null
     'I Am the highway':     'Am', // Match found, should return 'Am'
     'On the road again':    null, // No chord found, should return null
