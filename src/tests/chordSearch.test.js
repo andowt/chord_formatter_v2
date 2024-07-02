@@ -1,7 +1,6 @@
 const { isChord } = require('../modules/chordSearch'); // Adjust the path as necessary
 const fs = require('fs');
 const path = require('path');
-const readline = require('readline');
 
 const testCases = {
     'A':        ['A'],
@@ -32,40 +31,65 @@ describe('Chord Finder Single Line Tests', () => {
     let passCount = 0;
     let totTests = 0;
 
-    for (const [input, expected] of Object.entries(testCases)) {
-        test(`Test ${totTests}: ${input}`, () => {
+    Object.entries(testCases).forEach(([input, expected], index) => {
+        test(`Test ${index}: ${input}`, () => {
             const result = isChord(input);
             expect(result).toEqual(expected); // Use toEqual for array comparison
 
             if (result && result.length === expected.length && result.every((value, index) => value === expected[index])) {
                 passCount += 1;
             }
-            totTests += 1;
         });
-    }
+
+        totTests += 1;
+    });
 
     afterAll(() => {
         console.log(`Tests completed - ${passCount}/${totTests} passed`);
     });
 });
 
+
 describe('Chord Finder File Test', () => {
-    const exampleFilePath = path.join(__dirname, 'chordSheetSample.txt');
-
-    it('should read the file line by line and test each line for chords', async () => {
-        const fileStream = fs.createReadStream(exampleFilePath);
-        const rl = readline.createInterface({
-            input: fileStream,
-            crlfDelay: Infinity // To recognize all instances of \r, \n, or \r\n as line breaks
-        });
-
-        for await (const line of rl) {
-            const chords = isChord(line);
-            console.log(`Line: ${line}, Chords: ${JSON.stringify(chords)}`);
-            // Add your expect statements here to validate chords if needed
-            // For example, expect(chords).toEqual(expectedChords);
+    const filePath = path.join(__dirname, 'chordSheetSample.txt');
+    test('Test 0: Chord Sheet Sample', () => {
+        console.log("PATH: %s", filePath);
+        
+        // Check if the file exists
+        if (!fs.existsSync(filePath)) {
+            console.log("FILE NOT FOUND");
+            fail(`File not found at "${filePath}"`);
         }
 
-        rl.close();
+        // Read the entire file into memory
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        console.log("File Content:");
+        console.log(fileContent);
+
+        // Split the file content into an array of lines
+        const lines = fileContent.split(/\r?\n/);
+
+        const expected = [
+            ['E', 'G#7'],
+            ['F#m'],
+            ['A', 'B7', 'E'],
+            ['E', 'G#7', 'F#m', 'A', 'B7', 'E'],
+            ['E', 'G#7', 'F#m', 'A', 'B7', 'E'],
+            ['A', 'E'],
+            ['A', 'E', 'B7']
+        ]
+
+        // Process each line
+        let i = 0;
+        for (const line of lines) {
+            const chords = isChord(line);
+            if (chords == null) continue;
+            expect(chords).toEqual(expected[i++]);
+        }
+
+    });
+
+    afterAll(() => {
+        console.log(`Tests completed`);
     });
 });

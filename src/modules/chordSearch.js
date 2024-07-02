@@ -32,4 +32,4 @@ function isChord(text) {
   let match = text.match(regex);
   return match && match.length > 0 ? match : null;
 }
-module.exports = { isChord, chordSharps, chordFlats, chordNaturals, transposeSharp, transposeFlat, formattedAllOptions };
+module.exports = { isChord};
