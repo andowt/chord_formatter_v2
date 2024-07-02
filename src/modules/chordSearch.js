@@ -6,12 +6,15 @@ const transposeFlat = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G'
 
 const base = '[A-G]';
 const accidentals = '(b|#)';
-
 let types = ['maj', 'min', 'aug', 'dim', 'sus'];
+
+// Accomodate for first letter capital ie maj -> Maj
 const typesCapitalize = types.map(item => item.charAt(0).toUpperCase() + item.slice(1));
 types = types.concat(typesCapitalize);
+// Accomodate for all letter caps ie maj -> MAJ
 const typesUpper = types.map(item => item.toUpperCase());
 types = types.concat(typesUpper);
+// Accomodate for short hand ie Am7 or BM7
 types = types.concat(['m', 'M']);
 types = '(' + types.join('|') + ')';
 
@@ -27,7 +30,8 @@ const formattedAllOptions = '(' + [formattedFullChords, singleLetterChord1, sing
 
 function isChord(text) {
   const regex = new RegExp(formattedAllOptions);
-  return regex.test(text);
+  const match = text.match(regex);
+  return match ? match[0] : null;
 }
 
 module.exports = { isChord, chordSharps, chordFlats, chordNaturals, transposeSharp, transposeFlat, formattedAllOptions };
