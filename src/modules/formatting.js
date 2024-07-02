@@ -1,7 +1,8 @@
 const { markChords } = require('./chordSearch');
 
 // Function to format content with chord highlighting
-function formatContent(content) {
+function markChordsInContent(content)
+{
   // Highlight chords using spans
   let markedText = [];
   const lines = content.split('\n');
@@ -11,6 +12,41 @@ function formatContent(content) {
   return markedText.join('\n');
 }
 
+function unMarkChordsInContent(content)
+{
+  // Replace all '{' and '}' with an empty string
+  return content.replace(/\{/g, '').replace(/\}/g, '');
+}
+
+function nestChordsInContent(content)
+{
+  return content;
+}
+
+function unNestChordsInContent(content)
+{
+  return content;
+}
+
+function transposeInContent(content, steps)
+{
+  return content;
+}
+
+function removeBlankLinesInContent(content)
+{
+    // Regular expression to match blank lines (lines with only whitespace characters)
+    const regex = /^\s*[\r\n]/gm;
+    // Remove blank lines from content using regex
+    const cleanedContent = content.replace(regex, '');
+    return cleanedContent;
+}
+
 module.exports = {
-  formatContent
+  markChordsInContent,
+  unMarkChordsInContent,
+  nestChordsInContent,
+  unNestChordsInContent,
+  transposeInContent,
+  removeBlankLinesInContent
 };
