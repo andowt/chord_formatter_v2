@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
     editor.innerText = removeBlankLinesInContent(editor.innerText);
   });
 
-  document.getElementById('Transpose Up').addEventListener('click', () => {
+  document.getElementById('transUpBtn').addEventListener('click', () => {
     editor.innerText = transposeInContent(editor.innerText, 1);
   });
 
-  document.getElementById('Transpose Down').addEventListener('click', () => {
+  document.getElementById('transDownBtn').addEventListener('click', () => {
     editor.innerText = transposeInContent(editor.innerText, -1);
   });
   

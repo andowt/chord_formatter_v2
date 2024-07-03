@@ -1,15 +1,14 @@
-const { markChords } = require('./chordSearch');
+const { markChords, transposeChords } = require('./chordSearch');
 
 // Function to format content with chord highlighting
 function markChordsInContent(content)
 {
-  // Highlight chords using spans
-  let markedText = [];
+  let outputText = [];
   const lines = content.split('\n');
   for (const line of lines) {
-    markedText.push(markChords(line, '{', '}'));
+    outputText.push(markChords(line, '{', '}'));
   }
-  return markedText.join('\n');
+  return outputText.join('\n');
 }
 
 function unMarkChordsInContent(content)
@@ -30,7 +29,12 @@ function unNestChordsInContent(content)
 
 function transposeInContent(content, steps)
 {
-  return content;
+  let outputText = [];
+  const lines = content.split('\n');
+  for (const line of lines) {
+    outputText.push(transposeChords(line, steps));
+  }
+  return outputText.join('\n');
 }
 
 function removeBlankLinesInContent(content)

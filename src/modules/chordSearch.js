@@ -3,6 +3,7 @@ const chordFlats = ['Bb', 'Db', 'Eb', 'Gb', 'Ab'];
 const chordNaturals = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 const transposeSharp = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
 const transposeFlat = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
+const transposeMixed = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#'];
 
 const base = '[A-G]';
 const accidentals = '(bb|b|#)?';  // Ensure 'bb' is checked before 'b'
@@ -44,5 +45,47 @@ function markChords(text, leftStr, rightStr) {
   return result;
 }
 
+function transposeSingleChord(chord, steps) {
+  let isSharp = chordSharps.some(sharpChord => chord.startsWith(sharpChord));
+  let isFlat = chordFlats.some(flatChord => chord.startsWith(flatChord));
+  
+  let lookup_scale = transposeMixed;
+  if (isSharp)
+  {
+    lookup_scale = transposeSharp;
+  }
+  else if(isFlat)
+  {
+    lookup_scale = transposeFlat;
+  }
 
-module.exports = {findChords, markChords};
+  let output_scale = transposeMixed; //TODO could switch this on key?
+
+  const regex = new RegExp(`^(${base}${accidentals})`);
+  const match = chord.match(regex);
+  if (!match) return chord;
+
+  const rootNote = match[0];
+  const currentIndex = lookup_scale.indexOf(rootNote);
+  if (currentIndex === -1) return chord;
+
+  const newIndex = (currentIndex + steps + lookup_scale.length) % lookup_scale.length;
+  const newRoot = output_scale[newIndex];
+
+  return chord.replace(rootNote, newRoot);
+}
+
+function transposeChords(text, steps) {
+  let result = text;
+  const chords = findChords(text);
+  if (chords != null) {
+    chords.forEach(chord => {
+      const transposedChord = transposeSingleChord(chord, steps);
+      result = result.replace(chord, transposedChord);
+    });
+  }
+  return result;
+}
+
+
+module.exports = {findChords, markChords, transposeChords};
