@@ -2,53 +2,54 @@ const { findChords } = require('../modules/chordSearch'); // Adjust the path as 
 const fs = require('fs');
 const path = require('path');
 
-const testCases = {
-    'A':        ['A'],
-    'A#':       ['A#'],
-    'Bm':       ['Bm'],
-    'AMaj':     ['AMaj'],
-    'BMinor':   ['BMinor'],
-    'CMajor':   ['CMajor'],
-    'Ab7':      ['Ab7'],
-    'Abb7':     ['Abb7'],
-    'Bm7':      ['Bm7'],
-    'A#7':      ['A#7'],
-    'Am7/Bb':   ['Am7/Bb'],
-    'Am7b5':    ['Am7b5'],
-    'Fm7#11':   ['Fm7#11'],
-    'Cmin7b5#11b9#13b12#2': ['Cmin7b5#11b9#13b12#2'],
-    'Cminmaj7': ['Cminmaj7'],
-    'Cheese':   null, // No chord found, should return null
-    'I am the highway':     null, // No chord found, should return null
-    'I Am the highway':     ['Am'], // Match found - Unavoidable False positive
-    'On the road again':    null, // No chord found, should return null
-    'A man from kentucket': ['A'], // Match found - Unavoidable False positive
-    'Rebert E Lee': ['E'], // No chord found, should return null
-    'Am   BMaj7    DMinor  CbMajor  A#': ["Am", "BMaj7", "DMinor", "CbMajor", "A#"],
-};
+const testCases = [
+    { input: 'A', expected: ['A'] },
+    { input: 'A#', expected: ['A#'] },
+    { input: 'Bm', expected: ['Bm'] },
+    { input: 'AMaj', expected: ['AMaj'] },
+    { input: 'BMinor', expected: ['BMinor'] },
+    { input: 'CMajor', expected: ['CMajor'] },
+    { input: 'Ab7', expected: ['Ab7'] },
+    { input: 'Abb7', expected: ['Abb7'] },
+    { input: 'Bm7', expected: ['Bm7'] },
+    { input: 'A#7', expected: ['A#7'] },
+    { input: 'Am7/Bb', expected: ['Am7/Bb'] },
+    { input: 'Am7b5', expected: ['Am7b5'] },
+    { input: 'Fm7#11', expected: ['Fm7#11'] },
+    { input: 'Cmin7b5#11b9#13b12#2', expected: ['Cmin7b5#11b9#13b12#2'] },
+    { input: 'Cminmaj7', expected: ['Cminmaj7'] },
+    { input: 'Cheese', expected: null }, // No chord found, should return null
+    { input: 'I am the highway', expected: null }, // No chord found, should return null
+    { input: 'I Am the highway', expected: ['Am'] }, // Match found - Unavoidable False positive
+    { input: 'On the road again', expected: null }, // No chord found, should return null
+    { input: 'A man from kentucket', expected: ['A'] }, // Match found - Unavoidable False positive
+    { input: 'Rebert E Lee', expected: ['E'] }, // No chord found, should return null
+    { input: 'Am   BMaj7    DMinor  CbMajor  A#', expected: ["Am", "BMaj7", "DMinor", "CbMajor", "A#"] },
+    { input: 'Em     Em  Am  DMajor DMajor', expected: ["Em", "Em", "Am", "DMajor", "DMajor"]}
+];
+
 
 describe('Chord Finder Single Line Tests', () => {
     let passCount = 0;
-    let totTests = 0;
+    const totTests = testCases.length;
 
-    Object.entries(testCases).forEach(([input, expected], index) => {
+    testCases.forEach(({ input, expected }, index) => {
         test(`Test ${index}: ${input}`, () => {
             const result = findChords(input);
             expect(result).toEqual(expected); // Use toEqual for array comparison
 
-            if (result && result.length === expected.length && result.every((value, index) => value === expected[index])) {
+            if (result && expected && result.length === expected.length && result.every((value, idx) => value === expected[idx])) {
+                passCount += 1;
+            } else if (!result && !expected) {
                 passCount += 1;
             }
         });
-
-        totTests += 1;
     });
 
     afterAll(() => {
         console.log(`Tests completed - ${passCount}/${totTests} passed`);
     });
 });
-
 
 describe('Chord Finder File Test', () => {
     const filePath = path.join(__dirname, 'chordSheetSample.txt');
