@@ -120,10 +120,22 @@ function transposeChords(text, steps) {
   let remainder = text;
   for (const chord of raw_chords)
   {
+      let newChord = chord;
       const chord_index = remainder.indexOf(chord)
       const firstPart = remainder.substring(0, chord_index + chord.length);
       remainder = remainder.substring(chord_index + chord.length);
-      output_parts.push(firstPart.replace(chord, transposeSingleChord(chord, steps)));
+      if (chord.includes('/'))
+      {
+        const splitChord = chord.split('/')
+        const newUpper = transposeSingleChord(splitChord[0], steps);
+        const newLower = transposeSingleChord(splitChord[1], steps);
+        newChord = [newUpper, newLower].join('/');
+      }
+      else
+      {
+        newChord = transposeSingleChord(chord, steps);
+      }
+      output_parts.push(firstPart.replace(chord, newChord));
   }
 
   if (output_parts.length != raw_chords.length){ return text; }

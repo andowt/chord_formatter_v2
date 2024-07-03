@@ -44,8 +44,8 @@ const testCases = [
     { input: 'Ebm9  Ab13  Dbmaj9  Gbmaj9  C7b9', steps: 3, expected: 'F#m9  B13  Emaj9  Amaj9  Eb7b9' },
     { input: 'Ebm9  Ab13  Dbmaj9  Gbmaj9  C7b9', steps: -3, expected: 'Cm9  F13  Bbmaj9  Ebmaj9  A7b9' },
     { input: 'e#7 a  d   em9  cb13', steps: 0, expected: 'F7 A  D   Em9  B13'},
-    { input: 'A/C#  D/F#  G/B  Em  Bm/F#', steps: 5, expected: 'D/F#  G/B  C/E  Am  Em/G' }, // Added more complex slash chords
-    { input: 'A/C#  D/F#  G/B  Em  Bm/F#', steps: -3, expected: 'F#/C#  B/E  E/G#  C  Gm/B' }, // Added more complex slash chords
+    { input: 'A/C#  D/F#  G/B  Em  Bm/F#', steps: 5, expected: 'D/F#  G/B  C/E  Am  Em/B' }, // Added more complex slash chords
+    { input: 'A/C#  D/F#  G/B  Em  Bm/F#', steps: -3, expected: 'F#/Bb  B/Eb  E/G#  C#m  G#m/Eb' }, // Added more complex slash chords
 
 ];
 
