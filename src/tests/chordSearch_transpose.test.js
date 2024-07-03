@@ -5,6 +5,7 @@ const path = require('path');
 const testCases = [
     { input: 'A', steps: 0, expected: 'A' },
     { input: 'A', steps: 1, expected: 'Bb' },
+    { input: 'F#', steps: 1, expected: 'G' },
     { input: 'A', steps: -1, expected: 'G#' },
     { input: 'C', steps: 2, expected: 'D' },
     { input: 'G', steps: -2, expected: 'F' },
@@ -42,10 +43,13 @@ const testCases = [
     { input: 'Dbmaj7  Gb7  Bmaj7  Emaj7  A#m7', steps: -2, expected: 'Bmaj7  E7  Amaj7  Dmaj7  G#m7' },
     { input: 'Ebm9  Ab13  Dbmaj9  Gbmaj9  C7b9', steps: 3, expected: 'F#m9  B13  Emaj9  Amaj9  Eb7b9' },
     { input: 'Ebm9  Ab13  Dbmaj9  Gbmaj9  C7b9', steps: -3, expected: 'Cm9  F13  Bbmaj9  Ebmaj9  A7b9' },
-    { input: 'e#7 a  d   em9  cb13', steps: 0, expected: 'F7 A  D   Em9  B13'}
+    { input: 'e#7 a  d   em9  cb13', steps: 0, expected: 'F7 A  D   Em9  B13'},
+    { input: 'A/C#  D/F#  G/B  Em  Bm/F#', steps: 5, expected: 'D/F#  G/B  C/E  Am  Em/G' }, // Added more complex slash chords
+    { input: 'A/C#  D/F#  G/B  Em  Bm/F#', steps: -3, expected: 'F#/C#  B/E  E/G#  C  Gm/B' }, // Added more complex slash chords
+
 ];
 
-describe('Chord Transposer Tests', () => {
+describe('Chord Transposer Line Tests', () => {
     let passCount = 0;
     const totTests = testCases.length;
 
@@ -62,5 +66,108 @@ describe('Chord Transposer Tests', () => {
 
     afterAll(() => {
         console.log(`Tests completed - ${passCount}/${totTests} passed`);
+    });
+});
+
+describe('Chord Transposer Full Loop Up Tests', () => {
+    let passCount = 0;
+    const totTests = testCases.length;
+
+    testCases.forEach(({ input, steps, _}, index) => {
+        test(`Test ${index}: transpose(${steps}) - ${input}`, () => {
+            const expected = transposeChords(input, 0)
+            const result = transposeChords(input, 12);
+            expect(result).toEqual(expected); // Use toEqual for string comparison
+
+            if (result === expected) {
+                passCount += 1;
+            }
+        });
+    });
+
+    afterAll(() => {
+        console.log(`Tests completed - ${passCount}/${totTests} passed`);
+    });
+});
+
+describe('Chord Transposer Full Loop Down Tests', () => {
+    let passCount = 0;
+    const totTests = testCases.length;
+
+    testCases.forEach(({ input, steps, _}, index) => {
+        test(`Test ${index}: transpose(${steps}) - ${input}`, () => {
+            const expected = transposeChords(input, 0)
+            const result = transposeChords(input, -12);
+            expect(result).toEqual(expected); // Use toEqual for string comparison
+
+            if (result === expected) {
+                passCount += 1;
+            }
+        });
+    });
+
+    afterAll(() => {
+        console.log(`Tests completed - ${passCount}/${totTests} passed`);
+    });
+});
+
+describe('Chord Transposer Stepped Test', () =>{
+
+    test(`Test 0`, () => {
+        const example = "E G#7 F#m A B7 E"
+        let modified_line = example
+        for(let i=0; i<20; i++)
+        {
+            modified_line = transposeChords(modified_line, 1);
+            let check_line = transposeChords(example, i+1);
+            expect(modified_line).toEqual(check_line); // Use toEqual for string comparison
+        }
+    });
+
+    afterAll(() => {
+        console.log(`Tests completed`);
+    });
+})
+
+describe('Chord Transposer File Test', () => {
+    const filePath = path.join(__dirname, 'chordSheetFull.txt');
+    test('Test 0: Chord Sheet Sample', () => {
+        
+        // Check if the file exists
+        if (!fs.existsSync(filePath)) {
+            console.log("FILE NOT FOUND");
+            fail(`File not found at "${filePath}"`);
+        }
+
+        // Read the entire file into memory
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+
+        // Split the file content into an array of lines
+        const lines = fileContent.split(/\r?\n/);
+        let modifiedLines = lines.slice();
+
+        // Transpose each line up by 1 semitone 12 times
+        for (let i = 0; i < 12; i++) {
+            for (let j = 0; j < modifiedLines.length; j++) {
+                modifiedLines[j] = transposeChords(modifiedLines[j], 1);
+            }
+        }
+
+        // Transpose each line down by 1 semitone 12 times
+        for (let i = 0; i < 12; i++) {
+            for (let j = 0; j < modifiedLines.length; j++) {
+                modifiedLines[j] = transposeChords(modifiedLines[j], -1);
+            }
+        }
+
+        // Verify that the modified lines match the original lines
+        for (let i = 0; i < lines.length; i++) {
+            expect(modifiedLines[i]).toEqual(lines[i]);
+        }
+
+    });
+
+    afterAll(() => {
+        console.log(`Tests completed`);
     });
 });

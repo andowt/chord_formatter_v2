@@ -6,7 +6,7 @@ const transposeFlat =  ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G
 const transposeMixed = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#'];
 
 const base = '\\b[A-Ga-g]';
-const accidentals = '(bb|b|#)?';  // Ensure 'bb' is checked before 'b'
+const accidentals = '(b|#)?';  // Ensure 'bb' is checked before 'b'
 let types = ['major', 'minor', 'majmin', 'minmaj', 'maj', 'min', 'aug', 'dim', 'sus'];
 
 // Accommodate for first letter capital ie maj -> Maj
@@ -69,7 +69,8 @@ function findChords(text, nonChordThreshold = 0.5) {
 
 function markChords(text, leftStr, rightStr) {
   result = text;
-  if(findChords(text) != null)
+  [raw_chords, normal_chords] = findChords(text);
+  if(raw_chords != null)
   {
   const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
   // Replace each match with the surrounded version
@@ -80,62 +81,55 @@ function markChords(text, leftStr, rightStr) {
 
 function transposeSingleChord(chord, steps) {
 
-  chord = normaliseChord(chord); // Capitalize the first letter
-  let isSharp = chordSharps.some(sharpChord => chord.startsWith(sharpChord));
-  let isFlat = chordFlats.some(flatChord => chord.startsWith(flatChord));
+  chord = normaliseChord(chord); // Normalize the chord
 
-  let lookup_scale = transposeMixed;
-  if (isSharp) {
+  let match = null;
+  let lookup_scale = transposeMixed; // Default lookup scale
+  let output_scale = transposeMixed; // Default output scale
+
+  if (chordSharps.some(sharpChord => chord.startsWith(sharpChord))) 
+  {
+    match = chordSharps.find(sharpChord => chord.startsWith(sharpChord));
     lookup_scale = transposeSharp;
-  } else if (isFlat) {
+  }
+  else if (chordFlats.some(flatChord => chord.startsWith(flatChord))) 
+  {
+    match = chordFlats.find(flatChord => chord.startsWith(flatChord));
     lookup_scale = transposeFlat;
+  } 
+  else 
+  {
+    match = chordNaturals.find(naturalChord => chord.startsWith(naturalChord));
+    lookup_scale = transposeMixed;
   }
 
-  let output_scale = transposeMixed; // TODO could switch this on key?
-
-  const regex = new RegExp(`^([A-G][b#]?)`);
-  const match = chord.match(regex);
-  if (!match) return chord;
-
-  const rootNote = match[0];
-  const currentIndex = lookup_scale.indexOf(rootNote);
+  const currentIndex = lookup_scale.indexOf(match);
   if (currentIndex === -1) return chord;
 
-  const newIndex = (currentIndex + steps + lookup_scale.length) % lookup_scale.length;
-  const newRoot = output_scale[newIndex];
+  const newIndex = (currentIndex + steps + output_scale.length) % output_scale.length;
 
-  return chord.replace(rootNote, newRoot);
+  return chord.replace(match, output_scale[newIndex]);
 }
 
 function transposeChords(text, steps) {
   const [raw_chords, _] = findChords(text);
 
-  if (!raw_chords) {
-    return text;
+  if (!raw_chords) { return text; }
+
+  let output_parts = []
+  let remainder = text;
+  for (const chord of raw_chords)
+  {
+      const chord_index = remainder.indexOf(chord)
+      const firstPart = remainder.substring(0, chord_index + chord.length);
+      remainder = remainder.substring(chord_index + chord.length);
+      output_parts.push(firstPart.replace(chord, transposeSingleChord(chord, steps)));
   }
 
-  // Create a mapping of chord positions in the text
-  const chordPositions = [];
-  raw_chords.forEach(chord => {
-    const index = text.indexOf(chord);
-    if (index !== -1) {
-      chordPositions.push({ chord, index });
-    }
-  });
+  if (output_parts.length != raw_chords.length){ return text; }
 
-  // Sort chord positions by index in descending order to process from right to left
-  chordPositions.sort((a, b) => b.index - a.index);
+  return output_parts.join('');
 
-  // Transpose and replace each chord in the result
-  let result = text;
-  chordPositions.forEach(({ chord, index }) => {
-    const transposedChord = transposeSingleChord(chord, steps);
-    if (transposedChord !== chord) {
-      result = result.substring(0, index) + transposedChord + result.substring(index + chord.length);
-    }
-  });
-
-  return result;
 }
 
 

@@ -202,7 +202,7 @@ const testCases = [
 ];
 
 
-describe('Chord Finder Single Line Tests', () => {
+describe('Chord Finder Line Tests', () => {
     let passCount = 0;
     const totTests = testCases.length;
 
