@@ -3,29 +3,202 @@ const fs = require('fs');
 const path = require('path');
 
 const testCases = [
-    { input: 'A', expected: ['A'] },
-    { input: 'A#', expected: ['A#'] },
-    { input: 'Bm', expected: ['Bm'] },
-    { input: 'AMaj', expected: ['AMaj'] },
-    { input: 'BMinor', expected: ['BMinor'] },
-    { input: 'CMajor', expected: ['CMajor'] },
-    { input: 'Ab7', expected: ['Ab7'] },
-    { input: 'Abb7', expected: ['Abb7'] },
-    { input: 'Bm7', expected: ['Bm7'] },
-    { input: 'A#7', expected: ['A#7'] },
-    { input: 'Am7/Bb', expected: ['Am7/Bb'] },
-    { input: 'Am7b5', expected: ['Am7b5'] },
-    { input: 'Fm7#11', expected: ['Fm7#11'] },
-    { input: 'Cmin7b5#11b9#13b12#2', expected: ['Cmin7b5#11b9#13b12#2'] },
-    { input: 'Cminmaj7', expected: ['Cminmaj7'] },
-    { input: 'Cheese', expected: null }, // No chord found, should return null
-    { input: 'I am the highway', expected: null }, // No chord found, should return null
-    { input: 'I Am the highway', expected: ['Am'] }, // Match found - Unavoidable False positive
-    { input: 'On the road again', expected: null }, // No chord found, should return null
-    { input: 'A man from kentucket', expected: ['A'] }, // Match found - Unavoidable False positive
-    { input: 'Rebert E Lee', expected: ['E'] }, // No chord found, should return null
-    { input: 'Am   BMaj7    DMinor  CbMajor  A#', expected: ["Am", "BMaj7", "DMinor", "CbMajor", "A#"] },
-    { input: 'Em     Em  Am  DMajor DMajor', expected: ["Em", "Em", "Am", "DMajor", "DMajor"]}
+    { 
+        input: 'A', 
+        expected: {
+            found: ['A'],
+            normal: ['A']
+        }
+    },
+    { 
+        input: 'A#', 
+        expected: {
+            found: ['A#'],
+            normal: ['A#']
+        }
+    },
+    { 
+        input: 'Cb', 
+        expected: {
+            found: ['Cb'],
+            normal: ['B']
+        }
+    },
+    { 
+        input: 'e#', 
+        expected: {
+            found: ['e#'],
+            normal: ['F']
+        }
+    },
+    { 
+        input: 'Bm', 
+        expected: {
+            found: ['Bm'],
+            normal: ['Bm']
+        }
+    },
+    { 
+        input: 'AMaj', 
+        expected: {
+            found: ['AMaj'],
+            normal: ['AMaj']
+        }
+    },
+    { 
+        input: 'BMinor', 
+        expected: {
+            found: ['BMinor'],
+            normal: ['BMinor']
+        }
+    },
+    { 
+        input: 'CMajor', 
+        expected: {
+            found: ['CMajor'],
+            normal: ['CMajor']
+        }
+    },
+    { 
+        input: 'Ab7', 
+        expected: {
+            found: ['Ab7'],
+            normal: ['Ab7']
+        }
+    },
+    { 
+        input: 'Abb7', 
+        expected: {
+            found: ['Abb7'],
+            normal: ['Abb7']
+        }
+    },
+    { 
+        input: 'Bm7', 
+        expected: {
+            found: ['Bm7'],
+            normal: ['Bm7']
+        }
+    },
+    { 
+        input: 'A#7', 
+        expected: {
+            found: ['A#7'],
+            normal: ['A#7']
+        }
+    },
+    { 
+        input: 'Am7/Bb', 
+        expected: {
+            found: ['Am7/Bb'],
+            normal: ['Am7/Bb']
+        }
+    },
+    { 
+        input: 'Am7b5', 
+        expected: {
+            found: ['Am7b5'],
+            normal: ['Am7b5']
+        }
+    },
+    { 
+        input: 'Fm7#11', 
+        expected: {
+            found: ['Fm7#11'],
+            normal: ['Fm7#11']
+        }
+    },
+    { 
+        input: 'Cminmaj7', 
+        expected: {
+            found: ['Cminmaj7'],
+            normal: ['Cminmaj7']
+        }
+    },
+    { 
+        input: 'Cheese', 
+        expected: {
+            found: null,
+            normal: null
+        }
+    },
+    { 
+        input: 'I am the highway', 
+        expected: {
+            found: null,
+            normal: null,
+        }
+    },
+    { 
+        input: 'I Am the highway', 
+        expected: {
+            found: null,
+            normal: null,
+        }
+    },
+    { 
+        input: 'On the road again', 
+        expected: {
+            found: null,
+            normal: null
+        }
+    },
+    { 
+        input: 'A man from kentucket', 
+        expected: {
+            found: null, // Match found - Unavoidable False positive
+            normal: null, // Match found - Unavoidable False positive
+        }
+    },
+    { 
+        input: 'Robert E Lee', 
+        expected: {
+            found: null, // No chord found, should return null
+            normal: null, // No chord found, should return null
+        }
+    },
+    { 
+        input: 'Am   BMaj7    DMinor  CbMajor  A#', 
+        expected: {
+            found: ["Am", "BMaj7", "DMinor", "CbMajor", "A#"],
+            normal: ["Am", "BMaj7", "DMinor", "BMajor", "A#"]
+        }
+    },
+    { 
+        input: 'Cmin7b5#11b9#13b12#2', 
+        expected: {
+            found: ['Cmin7b5#11b9#13b12#2'],
+            normal: ['Cmin7b5#11b9#13b12#2']
+        }
+    },
+    { 
+        input: 'Em     Em  Am  DMajor DMajor', 
+        expected: {
+            found: ["Em", "Em", "Am", "DMajor", "DMajor"],
+            normal: ["Em", "Em", "Am", "DMajor", "DMajor"]
+        }
+    },
+    { 
+        input: 'e#7 a  d   em9', 
+        expected: {
+            found: ['e#7', 'a', 'd', 'em9'],
+            normal: ['F7', 'A', 'D', 'Em9']
+        }
+    },
+    {
+        input: '[INTRO] Am D7  eb5',
+        expected: {
+            found: ['Am', 'D7', 'eb5'],
+            normal: ['Am', 'D7', 'Eb5']
+        }
+    },
+    {
+        input: '[INTRO] Am D7  eb5 X3',
+        expected: {
+            found: ['Am', 'D7', 'eb5'],
+            normal: ['Am', 'D7', 'Eb5']
+        }
+    }
 ];
 
 
@@ -35,12 +208,22 @@ describe('Chord Finder Single Line Tests', () => {
 
     testCases.forEach(({ input, expected }, index) => {
         test(`Test ${index}: ${input}`, () => {
-            const result = findChords(input);
-            expect(result).toEqual(expected); // Use toEqual for array comparison
+            const [result, normal] = findChords(input);
+            expect(result).toEqual(expected?.found); // Use expected.found for array comparison
+            expect(normal).toEqual(expected?.normal);
 
-            if (result && expected && result.length === expected.length && result.every((value, idx) => value === expected[idx])) {
+            if (
+                result &&
+                expected &&
+                result.length === expected.found.length &&
+                result.every((value, idx) => value === expected.found[idx]) &&
+                normal &&
+                expected.normal &&
+                normal.length === expected.normal.length &&
+                normal.every((value, idx) => value === expected.normal[idx])
+            ) {
                 passCount += 1;
-            } else if (!result && !expected) {
+            } else if (!result && !expected.found && !normal && !expected.normal) {
                 passCount += 1;
             }
         });
@@ -51,10 +234,10 @@ describe('Chord Finder Single Line Tests', () => {
     });
 });
 
+
 describe('Chord Finder File Test', () => {
     const filePath = path.join(__dirname, 'chordSheetSample.txt');
     test('Test 0: Chord Sheet Sample', () => {
-        console.log("PATH: %s", filePath);
         
         // Check if the file exists
         if (!fs.existsSync(filePath)) {
@@ -64,8 +247,6 @@ describe('Chord Finder File Test', () => {
 
         // Read the entire file into memory
         const fileContent = fs.readFileSync(filePath, 'utf8');
-        console.log("File Content:");
-        console.log(fileContent);
 
         // Split the file content into an array of lines
         const lines = fileContent.split(/\r?\n/);
@@ -83,7 +264,7 @@ describe('Chord Finder File Test', () => {
         // Process each line
         let i = 0;
         for (const line of lines) {
-            const chords = findChords(line);
+            const [chords, normal] = findChords(line);
             if (chords == null) continue;
             expect(chords).toEqual(expected[i++]);
         }

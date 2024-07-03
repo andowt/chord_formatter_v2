@@ -5,7 +5,7 @@ const transposeSharp = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G
 const transposeFlat =  ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
 const transposeMixed = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#'];
 
-const base = '[A-G]';
+const base = '\\b[A-Ga-g]';
 const accidentals = '(bb|b|#)?';  // Ensure 'bb' is checked before 'b'
 let types = ['major', 'minor', 'majmin', 'minmaj', 'maj', 'min', 'aug', 'dim', 'sus'];
 
@@ -28,10 +28,43 @@ const formattedFullChords = formattedSingleChords + '(\\/(' + base + formattedCh
 const formattedAllOptions = '(' + formattedFullChords + '(?=\\s|$)' + ')';
 console.log("formattedAllOptions: %s", formattedAllOptions);
 
-function findChords(text) {
+function normaliseChord(chord)
+{
+  if (/[a-g]/.test(chord.charAt(0))) // Convert to uppercase if lowercase chord detected
+  {
+    chord = chord.charAt(0).toUpperCase() + chord.slice(1)
+  }
+  return chord.replace(/^Cb/, 'B').replace(/^Fb/, 'E').replace(/^E#/, 'F').replace(/^B#/, 'C');
+}
+
+function findChords(text, nonChordThreshold = 0.5) {
   const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
-  let match = text.match(regex);
-  return match && match.length > 0 ? match : null;
+  let matches = text.match(regex);
+
+  let text_no_chords = text.replace(regex, '').replace(/\s/g, ''); // Remove matches and then remove all whitespace
+  let num_non_chord_chars = text_no_chords.length;
+  let num_text_chars = text.length;
+  let percent_non_chord = (num_non_chord_chars / num_text_chars);
+
+  if ((percent_non_chord < nonChordThreshold) && (matches && matches.length > 0))
+  {
+    normalised_matches = matches.map(match => {
+      // Check if the first character is lowercase
+      if (/[a-g]/.test(match.charAt(0))) 
+      {
+        return normaliseChord(match.charAt(0).toUpperCase() + match.slice(1)); // Capitalize the first letter
+      }
+      else 
+      {
+        return normaliseChord(match); // Return unchanged if already capitalized or not a chord
+      }
+    });
+    return [matches, normalised_matches];
+  } 
+  else 
+  {
+    return [null, null]; // Return null if no matches found
+  }
 }
 
 function markChords(text, leftStr, rightStr) {
@@ -47,22 +80,15 @@ function markChords(text, leftStr, rightStr) {
 
 function transposeSingleChord(chord, steps) {
 
-  chord = chord.replace(/^Cb/, 'B').replace(/^Fb/, 'E').replace(/^E#/, 'F').replace(/^B#/, 'C');
+  chord = normaliseChord(chord); // Capitalize the first letter
   let isSharp = chordSharps.some(sharpChord => chord.startsWith(sharpChord));
   let isFlat = chordFlats.some(flatChord => chord.startsWith(flatChord));
-  console.log("sanitised chord: %s", chord);
 
   let lookup_scale = transposeMixed;
   if (isSharp) {
-    console.log("chord is sharp");
     lookup_scale = transposeSharp;
   } else if (isFlat) {
-    console.log("chord is flat");
     lookup_scale = transposeFlat;
-  }
-  else
-  {
-    console.log("chord is natural");
   }
 
   let output_scale = transposeMixed; // TODO could switch this on key?
@@ -74,26 +100,23 @@ function transposeSingleChord(chord, steps) {
   const rootNote = match[0];
   const currentIndex = lookup_scale.indexOf(rootNote);
   if (currentIndex === -1) return chord;
-  console.log("Chord root is: %s, index is: %d", rootNote, currentIndex);
 
   const newIndex = (currentIndex + steps + lookup_scale.length) % lookup_scale.length;
   const newRoot = output_scale[newIndex];
-  console.log("Transpose root is: %s, index is: %d", newRoot, newIndex)
 
   return chord.replace(rootNote, newRoot);
 }
 
 function transposeChords(text, steps) {
-  const chords = findChords(text);
-  console.log("Processing Line: %s", text);
+  const [raw_chords, _] = findChords(text);
 
-  if (!chords) {
+  if (!raw_chords) {
     return text;
   }
 
   // Create a mapping of chord positions in the text
   const chordPositions = [];
-  chords.forEach(chord => {
+  raw_chords.forEach(chord => {
     const index = text.indexOf(chord);
     if (index !== -1) {
       chordPositions.push({ chord, index });

@@ -42,7 +42,7 @@ const testCases = [
     { input: 'Dbmaj7  Gb7  Bmaj7  Emaj7  A#m7', steps: -2, expected: 'Bmaj7  E7  Amaj7  Dmaj7  G#m7' },
     { input: 'Ebm9  Ab13  Dbmaj9  Gbmaj9  C7b9', steps: 3, expected: 'F#m9  B13  Emaj9  Amaj9  Eb7b9' },
     { input: 'Ebm9  Ab13  Dbmaj9  Gbmaj9  C7b9', steps: -3, expected: 'Cm9  F13  Bbmaj9  Ebmaj9  A7b9' },
-    //{ input: 'e#7 a  d   em9', steps: 0, expected: 'F7 A  D   Em9'}
+    { input: 'e#7 a  d   em9  cb13', steps: 0, expected: 'F7 A  D   Em9  B13'}
 ];
 
 describe('Chord Transposer Tests', () => {
