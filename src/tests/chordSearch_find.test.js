@@ -1,4 +1,4 @@
-const { getChords, getNormalisedChords, chordsInText } = require('../modules/chordOperations'); // Adjust the path as necessary
+const { getChords, getNormalisedChords } = require('../modules/chordOperations'); // Adjust the path as necessary
 const fs = require('fs');
 const path = require('path');
 
@@ -118,43 +118,43 @@ const testCases = [
     { 
         input: 'Cheese', 
         expected: {
-            found: null,
-            normal: null
+            found: [],
+            normal: []
         }
     },
     { 
         input: 'I am the highway', 
         expected: {
-            found: null,
-            normal: null,
+            found: [],
+            normal: [],
         }
     },
     { 
         input: 'I Am the highway', 
         expected: {
-            found: null,
-            normal: null,
+            found: [],
+            normal: [],
         }
     },
     { 
         input: 'On the road again', 
         expected: {
-            found: null,
-            normal: null
+            found: [],
+            normal: []
         }
     },
     { 
         input: 'A man from kentucket', 
         expected: {
-            found: null, // Match found - Unavoidable False positive
-            normal: null, // Match found - Unavoidable False positive
+            found: [], // Match found - Unavoidable False positive
+            normal: [], // Match found - Unavoidable False positive
         }
     },
     { 
         input: 'Robert E Lee', 
         expected: {
-            found: null, // No chord found, should return null
-            normal: null, // No chord found, should return null
+            found: [], // No chord found, should return null
+            normal: [], // No chord found, should return null
         }
     },
     { 
@@ -209,11 +209,7 @@ describe('Chord Finder Line Tests', () => {
     testCases.forEach(({ input, expected }, index) => {
         test(`Test ${index}: ${input}`, () => {
             const chords = getChords(input);
-            let normal = null;
-            if(chords != null)
-            {
-                normal = getNormalisedChords(chords);
-            }
+            const normal = getNormalisedChords(chords);
             expect(chords).toEqual(expected?.found); // Use expected.found for array comparison
             expect(normal).toEqual(expected?.normal);
 
@@ -270,7 +266,7 @@ describe('Chord Finder File Test', () => {
         let i = 0;
         for (const line of lines) {
             const chords = getChords(line);
-            if (chords == null) continue;
+            if (chords.length == 0) continue;
             expect(chords).toEqual(expected[i++]);
         }
 

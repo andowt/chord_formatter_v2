@@ -42,7 +42,7 @@ function normaliseChord(chord)
   return chord.replace(/^Cb/, 'B').replace(/^Fb/, 'E').replace(/^E#/, 'F').replace(/^B#/, 'C');
 }
 
-function chordsInText(text)
+function checkChordDetectThreshold(text)
 {
   const text_no_chords = text.replace(chordRegex, '').replace(/\s/g, ''); // Remove matches and then remove all whitespace
   const percent_non_chord = (text_no_chords.length / text.length);
@@ -50,38 +50,38 @@ function chordsInText(text)
 }
 
 function getChords(text) {
-  result = null;
-  if(chordsInText(text))
+  let result = [];
+  let matches = text.match(chordRegex);
+  if((matches != null) && (matches.length > 0) && checkChordDetectThreshold(text))
   {
-    result = text.match(chordRegex);
+    result = matches;
   }
-  return result
+  return result;
 }
 
 function getChordsWithIndex(text)
 {
-  let result = null;
-  if(chordsInText(text))
-  {
-    let match;
-    let matches = [];
-    let indices = [];
+  let result = [[], []];
+  let match;
+  let matches = [];
+  let indices = [];
 
-    const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
-
-    while ((match = regex.exec(text)) !== null) {
-      matches.push(match[0]);
-      indices.push(match.index);
-    }
-    if (matches.length > 0){result = [matches, indices]};
+  while ((match = chordRegex.exec(text)) !== null) {
+    matches.push(match[0]);
+    indices.push(match.index);
   }
+  if ((matches.length > 0) && checkChordDetectThreshold(text))
+  {
+    result = [matches, indices]
+  }
+
   return result;
 }
 
 function getNormalisedChords(chords)
 {
-  let result = null;
-  if((chords != null) && (chords.length != 0))
+  let result = [];
+  if(chords.length > 0)
   {
     let normalisedChords = chords.map(match => {
       // Check if the first character is lowercase
@@ -97,13 +97,19 @@ function getNormalisedChords(chords)
 }
 
 function markChords(text, leftStr, rightStr) {
-  result = text;
+  let result = text;
+  console.log("text = %s", text);
   raw_chords = getChords(text);
-  if(raw_chords != null)
+  console.log("raw_chords: ");
+  console.log(raw_chords);
+  console.log(raw_chords.length);
+  if(raw_chords.length > 0)
   {
   // Replace each match with the surrounded version
+  console.log("chords found - replacing with match");
   result = text.replace(chordRegex, match => `${leftStr}${match}${rightStr}`);
   }
+  console.log("returning: %s", result);
   return result;
 }
 
@@ -142,7 +148,7 @@ function transposeSingleChord(chord, steps) {
 function transposeChords(text, steps) {
   const raw_chords = getChords(text);
 
-  if (raw_chords == null) { return text; }
+  if (raw_chords.length == 0) { return text; }
 
   let output_parts = []
   let remainder = text;
@@ -177,7 +183,6 @@ module.exports = {
   getChords,
   getChordsWithIndex,
   getNormalisedChords,
-  chordsInText,
   markChords,
   transposeChords
 };
