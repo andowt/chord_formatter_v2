@@ -5,8 +5,9 @@ const transposeSharp = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G
 const transposeFlat =  ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
 const transposeMixed = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#'];
 
-const base = '\\b[A-Ga-g]';
+const naturalNotePattern = '\\b[A-Ga-g]';
 const accidentals = '(b|#)?';  // Ensure 'bb' is checked before 'b'
+
 let types = ['major', 'minor', 'majmin', 'minmaj', 'maj', 'min', 'aug', 'dim', 'sus'];
 
 // Accommodate for first letter capital ie maj -> Maj
@@ -23,10 +24,14 @@ const dominant = '\\d*';
 const extensions = '((b\\d{1,2})|(#\\d{1,2}))*';
 
 const formattedChordOptions = accidentals + types + dominant + extensions;
-const formattedSingleChords = base + formattedChordOptions;
-const formattedFullChords = formattedSingleChords + '(\\/(' + base + formattedChordOptions + '))?';
+const formattedSingleChords = naturalNotePattern + formattedChordOptions;
+const formattedFullChords = formattedSingleChords + '(\\/(' + naturalNotePattern + formattedChordOptions + '))?';
 const formattedAllOptions = '(' + formattedFullChords + '(?=\\s|$)' + ')';
+
+const chordRegex = new RegExp(formattedAllOptions, 'g');
 console.log("formattedAllOptions: %s", formattedAllOptions);
+
+let nonChordThreshold = 0.5;
 
 function normaliseChord(chord)
 {
@@ -37,44 +42,67 @@ function normaliseChord(chord)
   return chord.replace(/^Cb/, 'B').replace(/^Fb/, 'E').replace(/^E#/, 'F').replace(/^B#/, 'C');
 }
 
-function findChords(text, nonChordThreshold = 0.5) {
-  const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
-  let matches = text.match(regex);
+function chordsInText(text)
+{
+  const text_no_chords = text.replace(chordRegex, '').replace(/\s/g, ''); // Remove matches and then remove all whitespace
+  const percent_non_chord = (text_no_chords.length / text.length);
+  return (percent_non_chord < nonChordThreshold);
+}
 
-  let text_no_chords = text.replace(regex, '').replace(/\s/g, ''); // Remove matches and then remove all whitespace
-  let num_non_chord_chars = text_no_chords.length;
-  let num_text_chars = text.length;
-  let percent_non_chord = (num_non_chord_chars / num_text_chars);
-
-  if ((percent_non_chord < nonChordThreshold) && (matches && matches.length > 0))
+function getChords(text) {
+  result = null;
+  if(chordsInText(text))
   {
-    normalised_matches = matches.map(match => {
+    result = text.match(chordRegex);
+  }
+  return result
+}
+
+function getChordsWithIndex(text)
+{
+  let result = null;
+  if(chordsInText(text))
+  {
+    let match;
+    let matches = [];
+    let indices = [];
+
+    const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
+
+    while ((match = regex.exec(text)) !== null) {
+      matches.push(match[0]);
+      indices.push(match.index);
+    }
+    if (matches.length > 0){result = [matches, indices]};
+  }
+  return result;
+}
+
+function getNormalisedChords(chords)
+{
+  let result = null;
+  if((chords != null) && (chords.length != 0))
+  {
+    let normalisedChords = chords.map(match => {
       // Check if the first character is lowercase
-      if (/[a-g]/.test(match.charAt(0))) 
-      {
+      if (/[a-g]/.test(match.charAt(0))) {
         return normaliseChord(match.charAt(0).toUpperCase() + match.slice(1)); // Capitalize the first letter
-      }
-      else 
-      {
+      } else {
         return normaliseChord(match); // Return unchanged if already capitalized or not a chord
       }
     });
-    return [matches, normalised_matches];
-  } 
-  else 
-  {
-    return [null, null]; // Return null if no matches found
+    result = normalisedChords;
   }
+  return result
 }
 
 function markChords(text, leftStr, rightStr) {
   result = text;
-  [raw_chords, normal_chords] = findChords(text);
+  raw_chords = getChords(text);
   if(raw_chords != null)
   {
-  const regex = new RegExp(formattedAllOptions, 'g'); // Use 'g' flag for global matching
   // Replace each match with the surrounded version
-  result = text.replace(regex, match => `${leftStr}${match}${rightStr}`);
+  result = text.replace(chordRegex, match => `${leftStr}${match}${rightStr}`);
   }
   return result;
 }
@@ -112,9 +140,9 @@ function transposeSingleChord(chord, steps) {
 }
 
 function transposeChords(text, steps) {
-  const [raw_chords, _] = findChords(text);
+  const raw_chords = getChords(text);
 
-  if (!raw_chords) { return text; }
+  if (raw_chords == null) { return text; }
 
   let output_parts = []
   let remainder = text;
@@ -145,4 +173,11 @@ function transposeChords(text, steps) {
 }
 
 
-module.exports = {findChords, markChords, transposeChords};
+module.exports = {
+  getChords,
+  getChordsWithIndex,
+  getNormalisedChords,
+  chordsInText,
+  markChords,
+  transposeChords
+};

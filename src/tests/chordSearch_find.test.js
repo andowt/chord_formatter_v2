@@ -1,4 +1,4 @@
-const { findChords } = require('../modules/chordSearch'); // Adjust the path as necessary
+const { getChords, getNormalisedChords, chordsInText } = require('../modules/chordOperations'); // Adjust the path as necessary
 const fs = require('fs');
 const path = require('path');
 
@@ -208,22 +208,27 @@ describe('Chord Finder Line Tests', () => {
 
     testCases.forEach(({ input, expected }, index) => {
         test(`Test ${index}: ${input}`, () => {
-            const [result, normal] = findChords(input);
-            expect(result).toEqual(expected?.found); // Use expected.found for array comparison
+            const chords = getChords(input);
+            let normal = null;
+            if(chords != null)
+            {
+                normal = getNormalisedChords(chords);
+            }
+            expect(chords).toEqual(expected?.found); // Use expected.found for array comparison
             expect(normal).toEqual(expected?.normal);
 
             if (
-                result &&
+                chords &&
                 expected &&
-                result.length === expected.found.length &&
-                result.every((value, idx) => value === expected.found[idx]) &&
+                chords.length === expected.found.length &&
+                chords.every((value, idx) => value === expected.found[idx]) &&
                 normal &&
                 expected.normal &&
                 normal.length === expected.normal.length &&
                 normal.every((value, idx) => value === expected.normal[idx])
             ) {
                 passCount += 1;
-            } else if (!result && !expected.found && !normal && !expected.normal) {
+            } else if (!chords && !expected.found && !normal && !expected.normal) {
                 passCount += 1;
             }
         });
@@ -264,7 +269,7 @@ describe('Chord Finder File Test', () => {
         // Process each line
         let i = 0;
         for (const line of lines) {
-            const [chords, normal] = findChords(line);
+            const chords = getChords(line);
             if (chords == null) continue;
             expect(chords).toEqual(expected[i++]);
         }
