@@ -1,4 +1,4 @@
-const { markChords, transposeChords } = require('./chordSearch');
+const { markChords, transposeChords, getChords, getChordsWithIndex } = require('./chordOperations').default;
 
 // Function to format content with chord highlighting
 function markChordsInContent(content)
@@ -17,10 +17,36 @@ function unMarkChordsInContent(content)
   return content.replace(/\{/g, '').replace(/\}/g, '');
 }
 
-function nestChordsInContent(content)
-{
-  return content;
+function nestChordsInContent(content) {
+  let lines = content.split('\n');
+  for (let n = 1; n < lines.length; n++) {
+    const [chords_prev, indicies_prev] = getChordsWithIndex(lines[n-1])
+    const chords_curr = getChords(lines[n]);
+
+    if ((chords_curr == null) && (chords_prev != null)) {
+      const len_prev = lines[n - 1].length;
+      const len_curr = lines[n].length;
+
+      if (len_curr < len_prev) {
+        // Append spaces to the current line
+        lines[n] += ' '.repeat(len_prev - len_curr);
+      }
+
+      let line_parts = [];
+      let last_index = 0;
+      for (let i = 0; i < indicies_prev.length; i++) {
+        line_parts.push(lines[n].slice(last_index, indicies_prev[i]));
+        line_parts.push(chords_prev[i]);
+        last_index = indicies_prev[i];
+      }
+      line_parts.push(lines[n].slice(last_index)); // Add the remaining part of the line
+
+      lines[n] = line_parts.join('');
+    }
+  }
+  return lines.join('\n');
 }
+
 
 function unNestChordsInContent(content)
 {

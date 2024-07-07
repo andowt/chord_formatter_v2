@@ -1,4 +1,4 @@
-const { transposeChords } = require('../modules/chordSearch'); // Adjust the path as necessary
+const { transposeChords } = require('../modules/chordOperations'); // Adjust the path as necessary
 const fs = require('fs');
 const path = require('path');
 
