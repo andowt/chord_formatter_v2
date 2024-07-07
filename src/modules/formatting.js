@@ -1,4 +1,4 @@
-const { markChords, transposeChords, getChords, getChordsWithIndex } = require('./chordOperations').default;
+const { markChords, transposeChords, getChords, getChordsWithIndex } = require('./chordOperations');
 
 // Function to format content with chord highlighting
 function markChordsInContent(content)
@@ -21,9 +21,9 @@ function nestChordsInContent(content) {
   let lines = content.split('\n');
   for (let n = 1; n < lines.length; n++) {
     const [chords_prev, indicies_prev] = getChordsWithIndex(lines[n-1])
-    const chords_curr = getChords(lines[n]);
+    const chords_curr = []
 
-    if ((chords_curr == null) && (chords_prev != null)) {
+    if ((chords_curr.length === 0) && (chords_prev.length > 0)) {
       const len_prev = lines[n - 1].length;
       const len_curr = lines[n].length;
 
@@ -36,12 +36,14 @@ function nestChordsInContent(content) {
       let last_index = 0;
       for (let i = 0; i < indicies_prev.length; i++) {
         line_parts.push(lines[n].slice(last_index, indicies_prev[i]));
+        line_parts.push('{')
         line_parts.push(chords_prev[i]);
+        line_parts.push('}')
         last_index = indicies_prev[i];
       }
       line_parts.push(lines[n].slice(last_index)); // Add the remaining part of the line
-
       lines[n] = line_parts.join('');
+      lines.splice(n-1, 1);
     }
   }
   return lines.join('\n');
