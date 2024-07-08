@@ -26,6 +26,7 @@ body {
     border: none;
     outline: none;
     resize: none;
+    white-space: pre;
   }
   .highlighted-chord {
     background-color: yellow; /* Yellow background */
