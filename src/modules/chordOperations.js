@@ -98,18 +98,12 @@ function getNormalisedChords(chords)
 
 function markChords(text, leftStr, rightStr) {
   let result = text;
-  console.log("text = %s", text);
   raw_chords = getChords(text);
-  console.log("raw_chords: ");
-  console.log(raw_chords);
-  console.log(raw_chords.length);
   if(raw_chords.length > 0)
   {
   // Replace each match with the surrounded version
-  console.log("chords found - replacing with match");
   result = text.replace(chordRegex, match => `${leftStr}${match}${rightStr}`);
   }
-  console.log("returning: %s", result);
   return result;
 }
 
