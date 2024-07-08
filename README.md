@@ -7,7 +7,8 @@ Application to format and key change chord sheets
 2. npm install --save-dev electron
 3. npm install --save-dev docx
 
-// For unit tests only
+### For unit tests only
+
 4. npm install --save-dev jest
 
 ## Building
