@@ -1,13 +1,14 @@
 const { remote } = require('electron');
 const path = require('path');
-const { loadExample } = require('./modules/fileOperations');
 const { 
   markChordsInContent, 
   unMarkChordsInContent, 
   nestChordsInContent, 
   unNestChordsInContent, 
   removeBlankLinesInContent, 
-  transposeInContent} = require('./modules/formatting');
+  transposeInContent,
+  loadExample
+} = require('./modules/chordContentProcessor');
 
 // Initialize UI interactions
 document.addEventListener('DOMContentLoaded', () => {
