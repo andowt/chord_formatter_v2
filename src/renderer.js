@@ -1,4 +1,4 @@
-const { remote } = require('electron');
+const { remote, ipcRenderer } = require('electron');
 const path = require('path');
 const { 
   markChordsInContent, 
@@ -45,6 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('transDownBtn').addEventListener('click', () => {
     editor.innerText = transposeInContent(editor.innerText, -1);
   });
-  
+
+  document.getElementById('generateButton').addEventListener('click', () => {
+    ipcRenderer.send('generate-docx', editor.innerText);
+  });
+
+  ipcRenderer.on('docx-saved', (event, filePath) => {
+    document.getElementById('status').textContent = `Document saved to: ${filePath}`;
+  });
+
+  ipcRenderer.on('docx-error', (event, error) => {
+    document.getElementById('status').textContent = `Error: ${error}`;
+  });
 
 });

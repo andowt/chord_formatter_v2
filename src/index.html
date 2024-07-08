@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="toolbar">
+  <div class="toolbar">
     <button id="markBtn">Mark Chords</button>
     <button id="unMarkBtn">UnMark Chords</button>
     <button id="nestBtn">Nest Chords</button>
@@ -17,6 +17,12 @@
     <button id="loadExampleBtn">Load Example</button>
   </div>
   <div id="editor" contenteditable="true" placeholder="Start typing..."></div>
+  <div id="toolbar">
+    <button id="generateButton">Generate Word Document</button>
+  </div>
+  <div>
+    <p id="status"></p>
+  </div>
   <script src="renderer.js"></script>
 </body>
 </html>
