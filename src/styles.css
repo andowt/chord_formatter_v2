@@ -7,14 +7,14 @@ body {
     height: 100vh;
   }
   
-  #toolbar {
+  .toolbar {
     display: flex;
     padding: 10px;
     background: #f0f0f0;
     border-bottom: 1px solid #ccc;
   }
   
-  #toolbar button {
+  .toolbar button {
     margin-right: 10px;
   }
   
