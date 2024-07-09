@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { Document, Packer, Paragraph, TextRun, AlignmentType, LineRuleType } = require('docx');
 
-function createWindow() {
+function createMainWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -14,18 +14,31 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile('windowMain/windowMain.html');
 
   console.log("Main Process Running");
 }
 
+function createConfigWindow() {
+  const configWindow = new BrowserWindow({
+      width: 400,
+      height: 300,
+      webPreferences: {
+          preload: path.join(__dirname, 'preload.js')
+      }
+  });
+
+  configWindow.loadFile('windowConfig/windowConfig.html');
+}
+
+
 // Wait for Electron app to be ready
-app.whenReady().then(createWindow);
+app.whenReady().then(createMainWindow);
 
 // macOS specific - create window if none exists
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    createMainWindow();
   }
 });
 
@@ -46,6 +59,15 @@ function preserveLeadingSpaces(line) {
   }
   return line;
 }
+
+ipcMain.on('save-config', (event, config) => {
+  console.log('Configuration saved:', config);
+  // Store the configuration or send it to the main window as needed
+});
+
+ipcMain.on('open-config-window', () => {
+  createConfigWindow();
+});
 
 // Handle generate-docx IPC event
 ipcMain.on('generate-docx', async (event, content) => {

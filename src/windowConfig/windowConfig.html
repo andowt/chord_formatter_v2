@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration</title>
+</head>
+<body>
+    <h1>Configuration</h1>
+    <form id="config-form">
+        <label for="font-size">Font Size:</label>
+        <input type="number" id="font-size" name="fontSize" required><br>
+
+        <label for="font-weight">Font Weight:</label>
+        <select id="font-weight" name="fontWeight" required>
+            <option value="normal">Normal</option>
+            <option value="bold">Bold</option>
+        </select><br>
+
+        <label for="transpose">Transpose:</label>
+        <input type="number" id="transpose" name="transpose" required><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <button type="submit">Save Configuration</button>
+    </form>
+
+    <script src="windowConfig.js"></script>
+</body>
+</html>

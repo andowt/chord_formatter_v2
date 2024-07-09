@@ -8,7 +8,7 @@ const {
   removeBlankLinesInContent, 
   transposeInContent,
   loadExample
-} = require('./modules/chordContentProcessor');
+} = require('../chordProcessing/chordContentProcessor');
 
 // Initialize UI interactions
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,5 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
   ipcRenderer.on('docx-error', (event, error) => {
     document.getElementById('status').textContent = `Error: ${error}`;
   });
+
+  document.getElementById('configBtn').addEventListener('click', () => {
+    ipcRenderer.send('open-config-window');
+});
 
 });
