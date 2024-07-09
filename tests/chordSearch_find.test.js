@@ -1,4 +1,4 @@
-const { getChords, getNormalisedChords } = require('../modules/chordOperations'); // Adjust the path as necessary
+const { getChords, getNormalisedChords } = require('../src/chordProcessing/chordOperations'); // Adjust the path as necessary
 const fs = require('fs');
 const path = require('path');
 

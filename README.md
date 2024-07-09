@@ -17,4 +17,4 @@ Application to format and key change chord sheets
 
 ## Unit testing
 
-2. npx jest
+2. npm run test
