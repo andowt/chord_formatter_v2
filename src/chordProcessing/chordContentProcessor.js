@@ -1,14 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const { markChords, transposeChords, getChordsWithIndex, getChords } = require('./chordOperations');
+import { markChords, transposeChords, getChordsWithIndex, getChords } from './chordOperations.js';
 
 let chordsMarked = false;
 let chordsNested = false;
 
 // Function to format content with chord highlighting
-function markChordsInContent(content)
+export function markChordsInContent(content)
 {
-  result = content;
+  let result = content;
   if(!chordsMarked && !chordsNested)
   {
     chordsMarked = true;
@@ -22,9 +20,9 @@ function markChordsInContent(content)
   return result;
 }
 
-function unMarkChordsInContent(content)
+export function unMarkChordsInContent(content)
 {
-  result = content;
+  let result = content;
   if(chordsMarked && !chordsNested)
   {
     chordsMarked = false;
@@ -33,9 +31,9 @@ function unMarkChordsInContent(content)
   return result;
 }
 
-function nestChordsInContent(content)
+export function nestChordsInContent(content)
 {
-  result = content;
+  let result = content;
   if(!chordsNested)
   {
     if(chordsMarked){content = unMarkChordsInContent(content);}
@@ -71,9 +69,9 @@ function nestChordsInContent(content)
 }
 
 
-function unNestChordsInContent(content) 
+export function unNestChordsInContent(content) 
 {
-  result = content;
+  let result = content;
   if(chordsNested)
   {
     chordsNested = false;
@@ -132,9 +130,9 @@ function unNestChordsInContent(content)
   return result;
 }
 
-function transposeInContent(content, steps)
+export function transposeInContent(content, steps)
 {
-  result = content;
+  let result = content;
   if(!chordsNested)
   {
     let reMark = false;
@@ -150,9 +148,9 @@ function transposeInContent(content, steps)
   return result;
 }
 
-function removeBlankLinesInContent(content)
+export function removeBlankLinesInContent(content)
 {
-  result = content;
+  let result = content;
   if(!chordsMarked && !chordsNested)
   {
     // Split the lyrics into lines
@@ -178,29 +176,3 @@ function removeBlankLinesInContent(content)
   }
   return result;
 }
-
-function loadExample(editor) {
-  chordsMarked = false;
-  chordsNested = false;
-  const exampleFilePath = path.join(__dirname, 'example.txt');
-  fs.readFile(exampleFilePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error loading example.txt:', err);
-      return;
-    }
-    // Replace newline characters with <br> and spaces with &nbsp;
-    const formattedData = data.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
-    editor.innerHTML = formattedData;
-    console.log('Loaded example.txt into editor.');
-  });
-}
-
-module.exports = {
-  markChordsInContent,
-  unMarkChordsInContent,
-  nestChordsInContent,
-  unNestChordsInContent,
-  transposeInContent,
-  removeBlankLinesInContent,
-  loadExample
-};

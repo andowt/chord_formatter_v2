@@ -6,26 +6,11 @@
     <title>Configuration</title>
 </head>
 <body>
-    <h1>Configuration</h1>
-    <form id="config-form">
-        <label for="font-size">Font Size:</label>
-        <input type="number" id="font-size" name="fontSize" required><br>
-
-        <label for="font-weight">Font Weight:</label>
-        <select id="font-weight" name="fontWeight" required>
-            <option value="normal">Normal</option>
-            <option value="bold">Bold</option>
-        </select><br>
-
-        <label for="transpose">Transpose:</label>
-        <input type="number" id="transpose" name="transpose" required><br>
-
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
-
-        <button type="submit">Save Configuration</button>
-    </form>
-
+    <h1>Configurations</h1>
+    <div id="configurations"></div>
+    <button id="add-config">Add Configuration</button>
+    <button id="save-configurations">Save Configurations</button>
+    
     <script src="windowConfig.js"></script>
 </body>
 </html>
