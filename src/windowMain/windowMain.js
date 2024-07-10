@@ -7,6 +7,7 @@ import {
   removeBlankLinesInContent,
 } from '../chordProcessing/chordContentProcessor.js';
 
+
 document.addEventListener('DOMContentLoaded', () => {
   const editor = document.getElementById('editor');
   if (window.ipcRender)
@@ -47,8 +48,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('generateButton').addEventListener('click', async () => {
-      try{ await window.ipcRender.invoke('generate-docx', editor.innerText);}
-      catch { console.log("Failed to render docx!"); }
+      
+        console.log("Loading configs from file");
+        let selectedDirectory = "";
+        try {
+          selectedDirectory = await window.ipcRender.invoke('get-output-dir', {});
+        }
+        catch (error)
+        {
+          console.log("Failed to get output dir", error);
+        }
+        if(selectedDirectory == ""){return;}
+        try {
+          let configurations = await window.ipcRender.invoke('load-config', 'config.json');
+          let inputElement = document.getElementById('filename');
+          let fileName = inputElement.value.replace(/\s+/g, '_');
+          console.log("Filename: %s", fileName);
+
+          for (const config of configurations) {
+            console.log("PROCESSING DOCX CONFIG: ");
+            console.log(config);
+            if (config.enable) {
+              let outputContent = transposeInContent(editor.innerText, parseInt(config.transpose));
+              //outputContent = lineSplit...
+              await window.ipcRender.invoke('generate-docx', [
+                config.fontSize,
+                config.fontWeight,
+                config.name,
+                outputContent,
+                selectedDirectory,
+                fileName
+              ]);
+            }
+          } 
+        } catch (error) {
+          console.log("Failed to load or process configurations", error);
+        }
 
     });
 

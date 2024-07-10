@@ -1,5 +1,5 @@
 const { Document, Packer, Paragraph, TextRun, AlignmentType, LineRuleType } = require('docx');
-const { app, ipcMain } = require('electron');
+const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
@@ -14,13 +14,39 @@ function preserveLeadingSpaces(line) {
     return line;
   }
 
+ipcMain.handle('get-output-dir', async (event, args) => {
+  console.log("Get output directory")
+  let selectedDirectory = "";
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      message: 'Select Output Directory'
+    });
+    
+    if (!result.canceled) {
+      selectedDirectory = result.filePaths[0];
+      // Now you have the selectedDirectory, you can proceed with your logic
+      console.log('Selected output directory:', selectedDirectory);
+      // Pass this selectedDirectory to your load-config function or store it for later use
+    }
+  } catch (error) {
+    console.error('Error selecting output directory:', error);
+  }
+  return selectedDirectory
+});
+
 // Handle generate-docx IPC event
 ipcMain.handle('generate-docx', async (event, args) => {
+    const fontSize = parseInt(args[0]);
+    const fontWeight = args[1];
+    const config_name = args[2];
+    const content = args[3];
+    const outputDir = args[4];
+    const fileName = args[5];
     try {
-      console.log("CONTENT: %s", args);
-  
+       
       // Split content into lines
-      const lines = args.split(/\n/);
+      const lines = content.split(/\n/);
   
       // Initialize an array to store paragraphs
       const paragraphs = [];
@@ -44,12 +70,12 @@ ipcMain.handle('generate-docx', async (event, args) => {
                   text: preservedLine.trim(),
                   font: 'Courier New',
                   bold: true,  // Make section headers bold
-                  size: 24,//Set in half points - 24/2 = 12pt
+                  size: fontSize*2,//Set in half points - 24/2 = 12pt
                 }),
               ],
               alignment: AlignmentType.LEFT,
               spacing: {
-                line: 240, //12pt converted to twips (12*20)
+                line: fontSize*20, //12pt converted to twips (12*20)
                 lineRule: LineRuleType.EXACT,
               },
             })
@@ -62,13 +88,13 @@ ipcMain.handle('generate-docx', async (event, args) => {
                 new TextRun({
                   text: preservedLine,
                   font: 'Courier New',
-                  bold: false,
-                  size: 24,//Set in half points - 24/2 = 12pt
+                  bold: (fontWeight == "bold" ),
+                  size: fontSize*2,//Set in half points - 24/2 = 12pt
                 }),
               ],
               alignment: AlignmentType.LEFT,
               spacing: {
-                line: 240, //12pt converted to twips (12*20)
+                line: fontSize*20, //12pt converted to twips (12*20)
                 lineRule: LineRuleType.EXACT,
               },
             })
@@ -99,7 +125,7 @@ ipcMain.handle('generate-docx', async (event, args) => {
   
       // Generate the Word document and save it to the filesystem
       const buffer = await Packer.toBuffer(doc);
-      const filePath = path.join(app.getPath('desktop'), 'output.docx');
+      const filePath = path.join(outputDir, fileName + '_' + config_name + '.docx');
       fs.writeFileSync(filePath, buffer);
   
       // Notify the renderer process that the file has been saved
