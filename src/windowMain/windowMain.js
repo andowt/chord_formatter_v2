@@ -46,6 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
       editor.innerText = transposeInContent(editor.innerText, -1);
     });
 
+    document.getElementById('generateButton').addEventListener('click', async () => {
+      try{ await window.ipcRender.invoke('generate-docx', editor.innerText);}
+      catch { console.log("Failed to render docx!"); }
+
+    });
+
 }
 else {
   console.error('Electron IPC Renderer not available yet.');
@@ -55,9 +61,7 @@ else {
     /*
 
 
-    document.getElementById('generateButton').addEventListener('click', () => {
-      window.electron.ipcRenderer.send('generate-docx', editor.innerText);
-    });
+
 
     window.electron.ipcRenderer.on('docx-saved', (event, filePath) => {
       document.getElementById('status').textContent = `Document saved to: ${filePath}`;

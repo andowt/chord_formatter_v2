@@ -151,8 +151,10 @@ export function transposeInContent(content, steps)
 export function removeBlankLinesInContent(content)
 {
   let result = content;
-  if(!chordsMarked && !chordsNested)
+  let prevMarked = false;
+  if(!chordsNested)
   {
+    if(chordsMarked){unMarkChordsInContent(content); prevMarked = true;}
     // Split the lyrics into lines
     let lines = content.split('\n');
 
@@ -173,6 +175,7 @@ export function removeBlankLinesInContent(content)
     }
     // Join the lines into a single string with newlines and return the result
     result = result_lines.join('\n');
+    if(prevMarked){markChordsInContent(result);}
   }
   return result;
 }

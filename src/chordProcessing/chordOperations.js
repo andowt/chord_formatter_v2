@@ -23,9 +23,10 @@ types = '(' + types.join('|') + ')?';
 const dominant = '\\d*';
 const extensions = '((b\\d{1,2})|(#\\d{1,2}))*';
 
-const formattedChordOptions = accidentals + types + dominant + extensions;
-const formattedSingleChords = naturalNotePattern + formattedChordOptions;
-const formattedFullChords = formattedSingleChords + '(\\/(' + naturalNotePattern + formattedChordOptions + '))?';
+const adds = '(add\\d{1,2}|Add\\d{1,2}|ADD\\d{1,2})?';
+
+const formattedChordOptions = naturalNotePattern + adds + accidentals + adds + types + adds + dominant + adds + extensions + adds;
+const formattedFullChords = formattedChordOptions + '(\\/(' + formattedChordOptions + '))?';
 const formattedAllOptions = '(' + formattedFullChords + '(?=\\s|$)' + ')';
 
 const chordRegex = new RegExp(formattedAllOptions, 'g');

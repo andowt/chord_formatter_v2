@@ -1,5 +1,5 @@
 const { Document, Packer, Paragraph, TextRun, AlignmentType, LineRuleType } = require('docx');
-const { ipcMain } = require('electron');
+const { app, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
@@ -15,12 +15,12 @@ function preserveLeadingSpaces(line) {
   }
 
 // Handle generate-docx IPC event
-ipcMain.on('generate-docx', async (event, content) => {
+ipcMain.handle('generate-docx', async (event, args) => {
     try {
-      console.log("CONTENT: %s", content);
+      console.log("CONTENT: %s", args);
   
       // Split content into lines
-      const lines = content.split(/\n/);
+      const lines = args.split(/\n/);
   
       // Initialize an array to store paragraphs
       const paragraphs = [];
@@ -103,9 +103,10 @@ ipcMain.on('generate-docx', async (event, content) => {
       fs.writeFileSync(filePath, buffer);
   
       // Notify the renderer process that the file has been saved
-      event.reply('docx-saved', filePath);
+      //event.reply('docx-saved', filePath);
     } catch (error) {
       console.error('Error generating document:', error);
-      event.reply('docx-error', error.message);
+      throw error;
+      //event.reply('docx-error', error.message);
     }
   });

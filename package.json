@@ -17,8 +17,7 @@
     "path": "^0.12.7"
   },
   "dependencies": {
-    "docx": "^8.5.0",
-    "esm": "^3.2.25"
+    "docx": "^8.5.0"
   },
   "jest": {
     "testEnvironment": "node",

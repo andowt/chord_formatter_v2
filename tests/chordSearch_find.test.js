@@ -123,6 +123,34 @@ const testCases = [
         }
     },
     { 
+        input: 'AMaj7#9', 
+        expected: {
+            found: ['AMaj7#9'],
+            normal: ['AMaj7#9']
+        }
+    },
+    { 
+        input: 'Eadd9', 
+        expected: {
+            found: ['Eadd9'],
+            normal: ['Eadd9']
+        }
+    },
+    { 
+        input: 'AMaj7#9add13', 
+        expected: {
+            found: ['AMaj7#9add13'],
+            normal: ['AMaj7#9add13']
+        }
+    },
+    { 
+        input: 'Eadd9#11', 
+        expected: {
+            found: ['Eadd9#11'],
+            normal: ['Eadd9#11']
+        }
+    },
+    { 
         input: 'Cheese', 
         expected: {
             found: [],
