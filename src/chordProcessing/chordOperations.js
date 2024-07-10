@@ -23,9 +23,10 @@ types = '(' + types.join('|') + ')?';
 const dominant = '\\d*';
 const extensions = '((b\\d{1,2})|(#\\d{1,2}))*';
 
-const formattedChordOptions = accidentals + types + dominant + extensions;
-const formattedSingleChords = naturalNotePattern + formattedChordOptions;
-const formattedFullChords = formattedSingleChords + '(\\/(' + naturalNotePattern + formattedChordOptions + '))?';
+const adds = '(add\\d{1,2}|Add\\d{1,2}|ADD\\d{1,2})?';
+
+const formattedChordOptions = naturalNotePattern + adds + accidentals + adds + types + adds + dominant + adds + extensions + adds;
+const formattedFullChords = formattedChordOptions + '(\\/(' + formattedChordOptions + '))?';
 const formattedAllOptions = '(' + formattedFullChords + '(?=\\s|$)' + ')';
 
 const chordRegex = new RegExp(formattedAllOptions, 'g');
@@ -33,7 +34,7 @@ console.log("formattedAllOptions: %s", formattedAllOptions);
 
 let nonChordThreshold = 0.5;
 
-function normaliseChord(chord)
+export function normaliseChord(chord)
 {
   if (/[a-g]/.test(chord.charAt(0))) // Convert to uppercase if lowercase chord detected
   {
@@ -49,7 +50,7 @@ function checkChordDetectThreshold(text)
   return (percent_non_chord < nonChordThreshold);
 }
 
-function getChords(text) {
+export function getChords(text) {
   let result = [];
   let matches = text.match(chordRegex);
   if((matches != null) && (matches.length > 0) && checkChordDetectThreshold(text))
@@ -59,7 +60,7 @@ function getChords(text) {
   return result;
 }
 
-function getChordsWithIndex(text)
+export function getChordsWithIndex(text)
 {
   let result = [[], []];
   let match;
@@ -78,7 +79,7 @@ function getChordsWithIndex(text)
   return result;
 }
 
-function getNormalisedChords(chords)
+export function getNormalisedChords(chords)
 {
   let result = [];
   if(chords.length > 0)
@@ -96,9 +97,9 @@ function getNormalisedChords(chords)
   return result
 }
 
-function markChords(text, leftStr, rightStr) {
+export function markChords(text, leftStr, rightStr) {
   let result = text;
-  raw_chords = getChords(text);
+  const raw_chords = getChords(text);
   if(raw_chords.length > 0)
   {
   // Replace each match with the surrounded version
@@ -107,7 +108,7 @@ function markChords(text, leftStr, rightStr) {
   return result;
 }
 
-function transposeSingleChord(chord, steps) {
+export function transposeSingleChord(chord, steps) {
 
   chord = normaliseChord(chord); // Normalize the chord
 
@@ -139,7 +140,7 @@ function transposeSingleChord(chord, steps) {
   return chord.replace(match, output_scale[newIndex]);
 }
 
-function transposeChords(text, steps) {
+export function transposeChords(text, steps) {
   const raw_chords = getChords(text);
 
   if (raw_chords.length == 0) { return text; }
@@ -173,10 +174,5 @@ function transposeChords(text, steps) {
 }
 
 
-module.exports = {
-  getChords,
-  getChordsWithIndex,
-  getNormalisedChords,
-  markChords,
-  transposeChords
-};
+
+

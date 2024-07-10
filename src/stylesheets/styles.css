@@ -1,36 +1,42 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  
-  .toolbar {
-    display: flex;
-    padding: 10px;
-    background: #f0f0f0;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .toolbar button {
-    margin-right: 10px;
-  }
-  
-  #editor {
-    flex: 1;
-    padding: 20px;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    border: none;
-    outline: none;
-    resize: none;
-    white-space: pre;
-  }
-  .highlighted-chord {
-    background-color: yellow; /* Yellow background */
-    padding: 0.2em 0.5em; /* Padding around the chord */
-    border-radius: 3px; /* Rounded corners */
-    font-weight: bold; /* Bold text */
-  }
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.toolbar {
+  display: flex;
+  padding: 10px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+  position: sticky; /* Make the toolbar sticky */
+  top: 0; /* Stick the toolbar to the top of the container */
+  z-index: 1000; /* Ensure the toolbar is above other content */
+}
+
+.toolbar button {
+  margin-right: 10px;
+}
+
+#editor {
+  flex: 1;
+  padding: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  resize: none;
+  white-space: pre;
+  overflow-y: auto; /* Allow vertical scrolling */
+  height: calc(100vh - 80px); /* Adjust the height to account for the toolbar height */
+}
+
+.highlighted-chord {
+  background-color: yellow; /* Yellow background */
+  padding: 0.2em 0.5em; /* Padding around the chord */
+  border-radius: 3px; /* Rounded corners */
+  font-weight: bold; /* Bold text */
+}
