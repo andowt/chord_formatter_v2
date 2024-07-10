@@ -1,30 +1,9 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow} = require('electron');
 const path = require('path');
 
-require('./helpers/exampleLoader/exampleTxtHelper.cjs')
-require('./helpers/docxGenerator/docxGen.cjs')
-
-let configurations = [];
-
-/*
-function createConfigWindow() {
-  const configWindow = new BrowserWindow({
-      width: 600,
-      height: 400,
-      webPreferences: {
-          preload: path.join(__dirname, 'preload.js'),
-          contextIsolation: true,
-          enableRemoteModule: false
-      }
-  });
-
-  configWindow.loadFile('windowConfig/windowConfig.html');
-
-  configWindow.webContents.on('did-finish-load', () => {
-      configWindow.webContents.send('load-configurations', configurations);
-  });
-}
-*/
+require('./exampleLoader/exampleTxtHelper.cjs')
+require('./docxGenerator/docxGen.cjs')
+require('./windowConfig/windowConfig.cjs')
 
 app.on('ready', () => {
   console.log('Electron app is ready');
@@ -58,11 +37,4 @@ app.on('window-all-closed', () => {
   }
 });
 
-ipcMain.on('open-config-window', () => {
-  createConfigWindow();
-});
-
-ipcMain.on('save-config', (event, updatedConfigurations) => {
-  configurations = updatedConfigurations;
-});
 

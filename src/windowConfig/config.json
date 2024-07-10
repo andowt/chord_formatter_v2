@@ -1,0 +1,44 @@
+[
+  {
+    "fontSize": "12",
+    "fontWeight": "normal",
+    "transpose": "0",
+    "name": "Standard",
+    "enable": true
+  },
+  {
+    "fontSize": "12",
+    "fontWeight": "normal",
+    "transpose": "0",
+    "name": "Standard Capo",
+    "enable": false
+  },
+  {
+    "fontSize": "24",
+    "fontWeight": "bold",
+    "transpose": "0",
+    "name": "Large",
+    "enable": true
+  },
+  {
+    "fontSize": "24",
+    "fontWeight": "bold",
+    "transpose": "0",
+    "name": "Large Capo",
+    "enable": false
+  },
+  {
+    "fontSize": "12",
+    "fontWeight": "normal",
+    "transpose": "2",
+    "name": "Bb",
+    "enable": true
+  },
+  {
+    "fontSize": "12",
+    "fontWeight": "normal",
+    "transpose": "-3",
+    "name": "Eb",
+    "enable": true
+  }
+]
