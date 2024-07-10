@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
+    document.getElementById('configBtn').addEventListener('click', async () => {
+      try{ await window.ipcRender.invoke('open-config-window', editor.innerText);}
+      catch { console.log("Failed to open config window"); }
+    }); 
+
 }
 else {
   console.error('Electron IPC Renderer not available yet.');
@@ -71,7 +76,5 @@ else {
       document.getElementById('status').textContent = `Error: ${error}`;
     });
 
-    document.getElementById('configBtn').addEventListener('click', () => {
-      window.electron.ipcRenderer.send('open-config-window');
-    }); */
+*/
 
