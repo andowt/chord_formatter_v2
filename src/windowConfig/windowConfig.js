@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <label for="name-${index}">Name:</label>
             <input type="text" id="name-${index}" name="name" value="${config.name}" required><br>
 
+            <label for="A3-${index}">A3:</label>
+            <input type="checkbox" id="A3-${index}" name="A3" ${config.A3 ? 'checked' : ''} required><br>
+
             <label for="enable-${index}">Enable:</label>
             <input type="checkbox" id="enable-${index}" name="enable" ${config.enable ? 'checked' : ''} required><br>
   
@@ -87,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
               fontWeight: document.getElementById(`font-weight-${index}`).value,
               transpose: document.getElementById(`transpose-${index}`).value,
               name: document.getElementById(`name-${index}`).value,
+              a3: document.getElementById(`A3-${index}`).checked,
               enable: document.getElementById(`enable-${index}`).checked,
             };
         });
@@ -102,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
           fontWeight: 'normal',
           transpose: '0',
           name: '',
+          a3: true,
           enable: true,
         };
   

@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           let configurations = await window.ipcRender.invoke('load-config', 'config.json');
           let inputElement = document.getElementById('filename');
-          let fileName = inputElement.value.replace(/\s+/g, '_');
+          let fileName = inputElement.value;
           console.log("Filename: %s", fileName);
 
           for (const config of configurations) {
@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 config.fontSize,
                 config.fontWeight,
                 config.name,
+                config.a3,
                 outputContent,
                 selectedDirectory,
                 fileName
