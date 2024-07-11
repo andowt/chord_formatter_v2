@@ -5,6 +5,7 @@ import {
   unNestChordsInContent,
   transposeInContent,
   removeBlankLinesInContent,
+  autoBreakContent
 } from '../chordProcessing/chordContentProcessor.js';
 
 
@@ -61,8 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(selectedDirectory == ""){return;}
         try {
           let configurations = await window.ipcRender.invoke('load-config', 'config.json');
-          let inputElement = document.getElementById('filename');
-          let fileName = inputElement.value;
+          let fileName = document.getElementById('filename').value;
           console.log("Filename: %s", fileName);
 
           for (const config of configurations) {
@@ -70,6 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(config);
             if (config.enable) {
               let outputContent = transposeInContent(editor.innerText, parseInt(config.transpose));
+              if(document.getElementById('autoBreak').value)
+              {
+                outputContent = autoBreakContent(outputContent, parseInt(config.fontSize), config.a3);
+              }
               //outputContent = lineSplit...
               await window.ipcRender.invoke('generate-docx', [
                 config.fontSize,
@@ -82,7 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
               ]);
             }
           } 
+          await window.ipcRender.invoke('docx-result-prompt', true);
         } catch (error) {
+          await window.ipcRender.invoke('docx-result-prompt', false);
           console.log("Failed to load or process configurations", error);
         }
 

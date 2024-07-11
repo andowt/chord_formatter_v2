@@ -8,8 +8,8 @@ require('./windowConfig/windowConfig.cjs')
 app.on('ready', () => {
   console.log('Electron app is ready');
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 768,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
