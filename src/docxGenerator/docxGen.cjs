@@ -134,9 +134,8 @@ ipcMain.handle('generate-docx', async (event, args) => {
                       new TextRun({
                         text: fileName.toUpperCase() + "  /  " + config_name.toUpperCase() + "\n",
                         bold: true,
-                        font: {
-                          name: "Courier New",
-                        },
+                        font:"Courier New",
+                        size: fontSize*2,//Set in half points - 24/2 = 12pt
                       }),
                     ],
                     alignment: "center",
