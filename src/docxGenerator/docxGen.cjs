@@ -35,6 +35,42 @@ ipcMain.handle('get-output-dir', async (event, args) => {
   return selectedDirectory
 });
 
+ipcMain.handle('docx-result-prompt', async (event, args) => {
+  let passed = args;
+  if(passed)
+  {
+    dialog.showMessageBox({ 
+      // option Object 
+      type: 'none', 
+      buttons: [], 
+      defaultId: 0, 
+      icon: '', 
+      title: 'DOCX Generation Status', 
+      message: 'DOCX Generation Completed Successfully', 
+      detail: '', 
+      cancelId: 0, 
+      noLink: false, 
+      normalizeAccessKeys: false, 
+  });
+  }
+  else
+  {
+    dialog.showMessageBox({ 
+      // option Object 
+      type: 'none', 
+      buttons: [], 
+      defaultId: 0, 
+      icon: '', 
+      title: 'DOCX Generation Status', 
+      message: "Docx Generated Failed!\nCheck no generated files are opened!", 
+      detail: '', 
+      cancelId: 0, 
+      noLink: false, 
+      normalizeAccessKeys: false, 
+  });
+  }
+})
+
 // Handle generate-docx IPC event
 ipcMain.handle('generate-docx', async (event, args) => {
     const fontSize = parseInt(args[0]);
@@ -132,7 +168,7 @@ ipcMain.handle('generate-docx', async (event, args) => {
                   new Paragraph({
                     children: [
                       new TextRun({
-                        text: fileName.toUpperCase() + "  /  " + config_name.toUpperCase() + "\n",
+                        text: fileName.toUpperCase() + "  /  " + config_name + "\n",
                         bold: true,
                         font:"Courier New",
                         size: fontSize*2,//Set in half points - 24/2 = 12pt
@@ -157,6 +193,7 @@ ipcMain.handle('generate-docx', async (event, args) => {
   
       // Notify the renderer process that the file has been saved
       //event.reply('docx-saved', filePath);
+
     } catch (error) {
       console.error('Error generating document:', error);
       throw error;

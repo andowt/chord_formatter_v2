@@ -148,6 +148,81 @@ export function transposeInContent(content, steps)
   return result;
 }
 
+export function autoBreakContent(content, fontSize, a3) {
+  // Lookup table of font sizes and their corresponding maximum line lengths
+  const fontSizeLookup = [
+    { size: 8,  maxLength: 112 },
+    { size: 10, maxLength: 89 },
+    { size: 12, maxLength: 70 },
+    { size: 14, maxLength: 64 },
+    { size: 16, maxLength: 56 },
+    { size: 18, maxLength: 49 },
+    { size: 20, maxLength: 44 },
+    { size: 22, maxLength: 40 },
+    { size: 24, maxLength: 37 },
+    { size: 26, maxLength: 34 },
+    { size: 28, maxLength: 32 },
+    { size: 30, maxLength: 24 }
+  ];
+
+  // Find the maximum line length for the given font size
+  let maxLength = 0;
+  for (let i = 0; i < fontSizeLookup.length; i++) {
+    if (fontSize === fontSizeLookup[i].size) {
+      maxLength = fontSizeLookup[i].maxLength;
+      break;
+    }
+  }
+  
+  // If no matching font size is found, return original content
+  if (maxLength === 0) {
+    return content;
+  }
+
+  // Adjust maxLength if printing on A3 paper
+  if (a3) {
+    maxLength *= 1.4;
+  }
+
+  // Function to nest chords in content (assuming it's defined elsewhere)
+  content = nestChordsInContent(content);
+  let resultLines = [];
+  for(const line of content.split('\n')) {
+    let cleanedLine = line.replace(/\u00A0/g, ' ');
+    if(cleanedLine.length <= maxLength)
+    {
+      resultLines.push(cleanedLine);
+    }
+    else
+    {
+      let words = cleanedLine.split(' ');
+      let currentLine = '';
+      
+      for (let i = 0; i < words.length; i++) {
+        let testLine = currentLine + ' ' + words[i];
+        console.log("testLine");
+        console.log(testLine);
+        
+        if (testLine.length <= maxLength) {
+          currentLine = testLine;
+        } else {
+          console.log("HERE PUSHING");
+          console.log(currentLine)
+          resultLines.push(currentLine);
+          currentLine = words[i];
+        }
+      }
+      
+      if (currentLine !== '') {
+        resultLines.push(currentLine);
+      }
+    }
+  }
+
+  // Function to un-nest chords in content (assuming it's defined elsewhere)
+  return unNestChordsInContent(resultLines.join('\n'));
+}
+
 export function removeBlankLinesInContent(content)
 {
   let result = content;

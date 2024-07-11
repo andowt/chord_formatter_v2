@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="text" id="name-${index}" name="name" value="${config.name}" required><br>
 
             <label for="A3-${index}">A3:</label>
-            <input type="checkbox" id="A3-${index}" name="A3" ${config.A3 ? 'checked' : ''} required><br>
+            <input type="checkbox" id="A3-${index}" name="A3" ${config.a3 ? 'checked' : ''} required><br>
 
             <label for="enable-${index}">Enable:</label>
             <input type="checkbox" id="enable-${index}" name="enable" ${config.enable ? 'checked' : ''} required><br>
