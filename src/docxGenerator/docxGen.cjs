@@ -1,4 +1,4 @@
-const { Document, Packer, Paragraph, TextRun, AlignmentType, LineRuleType } = require('docx');
+const { Document, Packer, Paragraph, TextRun, AlignmentType, LineRuleType, PageOrientation, Header } = require('docx');
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
@@ -40,9 +40,14 @@ ipcMain.handle('generate-docx', async (event, args) => {
     const fontSize = parseInt(args[0]);
     const fontWeight = args[1];
     const config_name = args[2];
-    const content = args[3];
-    const outputDir = args[4];
-    const fileName = args[5];
+    const a3 = args[3]
+    const content = args[4];
+    const outputDir = args[5];
+    const fileName = args[6];
+
+    const pageWidth = (a3) ? "297mm" : "210mm";
+    const pageHeight = (a3) ? "420mm" : "297mm"
+
     try {
        
       // Split content into lines
@@ -114,7 +119,30 @@ ipcMain.handle('generate-docx', async (event, args) => {
                   bottom: 568 * 1.27,
                   left: 568 * 1.27,
                 },
+                size: {
+                  width: pageWidth,
+                  height: pageHeight,
+                  orientation: PageOrientation.PORTRAIT,
+                }
               },
+            },
+            headers: {
+              default: new Header({
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: fileName.toUpperCase() + "  /  " + config_name.toUpperCase() + "\n",
+                        bold: true,
+                        font: {
+                          name: "Courier New",
+                        },
+                      }),
+                    ],
+                    alignment: "center",
+                  }),
+                ],
+              }),
             },
             children: paragraphs,
           },
@@ -125,7 +153,7 @@ ipcMain.handle('generate-docx', async (event, args) => {
   
       // Generate the Word document and save it to the filesystem
       const buffer = await Packer.toBuffer(doc);
-      const filePath = path.join(outputDir, fileName + '_' + config_name + '.docx');
+      const filePath = path.join(outputDir, fileName.replace(/\s+/g, '_') + '_' + config_name + '.docx');
       fs.writeFileSync(filePath, buffer);
   
       // Notify the renderer process that the file has been saved
